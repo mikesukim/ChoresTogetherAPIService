@@ -12,8 +12,12 @@ repositories {
 
 dependencies {
     //Logging
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
-    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.6.1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
+    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0'
+
+    // Jersey2-Guice
+    // https://github.com/logzio/guice-jersey
+    implementation 'io.logz:guice-jersey:1.1.05'
 
     //Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
@@ -21,6 +25,16 @@ dependencies {
     //Spock Testing
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
     testImplementation group: 'cglib', name: 'cglib-nodep', version: '2.2'
+}
+
+jar {
+    // To make jar executable, specifying manifest is required.
+    manifest {
+        attributes(
+                'Main-Class': 'chorestogetherapiservice.ChoresTogetherAPIService',
+                'Class-Path': configurations.runtimeClasspath.files { it.getName() }.join(' ')
+        )
+    }
 }
 
 test {
