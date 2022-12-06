@@ -16,7 +16,7 @@ public class ChoresTogetherAPIService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChoresTogetherAPIService.class);
     public static void main(String[] args) throws Exception {
         JerseyConfiguration configuration = JerseyConfiguration.builder()
-                .addPackage("java.chorestogetherapiservice")
+                .addPackage("chorestogetherapiservice")
                 .addPort(8080)
                 .build();
 
