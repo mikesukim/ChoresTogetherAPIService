@@ -17,7 +17,11 @@ dependencies {
 
     // Jersey2-Guice
     // https://github.com/logzio/guice-jersey
-    implementation 'io.logz:guice-jersey:1.1.05'
+    implementation 'io.logz:guice-jersey:1.0.13'
+
+    // Bean validation (both uses Hibernate validator)
+    implementation 'org.glassfish.jersey.ext:jersey-bean-validation:2.37' // To be used with Jersey class resource
+    implementation 'ru.vyarus:guice-validator:2.0.1' // To be used with Guice classes
 
     //Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
