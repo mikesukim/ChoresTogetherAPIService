@@ -21,11 +21,11 @@ if instance not found, then Guice injector will be checked.
  */
 
 /*
-This @Singleton is for the jersey class resource's scope,
-since the default scope is @RequestedScope.
+This @RequestedScope is a default life cycle for the jersey class resource (or JAR-RX)
 https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/jaxrs-resources.html#d0e2692
+and using default life cycle instead of @Singleton is preferred since
+1) there's no high performance issue, 2) @Singleton can't be used with passing @QueryParam as a field.
  */
-@Singleton
 @Path("/chores")
 public class ChoresActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChoresActivity.class);
