@@ -1,6 +1,11 @@
 package chorestogetherapiservice.activity;
 
+import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.domain.UserEmail;
+import chorestogetherapiservice.exception.DependencyFailureInternalException;
+import chorestogetherapiservice.exception.datastore.NoItemFoundException;
+import chorestogetherapiservice.exception.activity.DependencyFailureException;
+import chorestogetherapiservice.exception.activity.ResourceNotFoundException;
 import chorestogetherapiservice.logic.GetUserLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +31,16 @@ public class GetUserActivity {
 
     @GET
     @Path("/{userEmailInput}")
-    public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput) {
-        // TODO : convert userEmailInput to UserEmail
-        getUserLogic.getUser(new UserEmail());
-        return Response.status(200).entity("getUser is called, email : " + userEmailInput).build();
+    public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput) throws DependencyFailureInternalException {
+        // TODO : decouple converting userEmailInput to UserEmail
+        User user;
+        try {
+            user = getUserLogic.getUser(new UserEmail(userEmailInput));
+        } catch (DependencyFailureInternalException e) {
+            throw new DependencyFailureException("Dependency failed while executing logic.", e);
+        } catch (NoItemFoundException e) {
+            throw new ResourceNotFoundException("User is not found.", e);
+        }
+        return Response.status(200).entity("user is found. email : " + user.getEmail()).build();
     }
 }

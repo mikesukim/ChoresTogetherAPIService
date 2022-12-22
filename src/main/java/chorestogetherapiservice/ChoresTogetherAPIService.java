@@ -1,5 +1,6 @@
 package chorestogetherapiservice;
 
+import chorestogetherapiservice.module.AwsSdk2Module;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import io.logz.guice.jersey.JerseyModule;
@@ -19,7 +20,8 @@ public class ChoresTogetherAPIService {
 
         Injector injector = Guice.createInjector(
                 new JerseyModule(configuration),
-                new ValidationModule()
+                new ValidationModule(),
+                new AwsSdk2Module()
         );
         JerseyServer server = injector.getInstance(JerseyServer.class);
 

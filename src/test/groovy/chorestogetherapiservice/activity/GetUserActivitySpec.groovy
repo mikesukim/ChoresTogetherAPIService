@@ -1,5 +1,11 @@
 package chorestogetherapiservice.activity
 
+import chorestogetherapiservice.domain.User
+import chorestogetherapiservice.domain.UserEmail
+import chorestogetherapiservice.exception.DependencyFailureInternalException
+import chorestogetherapiservice.exception.activity.DependencyFailureException
+import chorestogetherapiservice.exception.activity.ResourceNotFoundException
+import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.logic.GetUserLogic
 import chorestogetherapiservice.logic.GetUserLogicSpec
 import spock.lang.Specification
@@ -26,17 +32,6 @@ class GetUserActivitySpec extends Specification {
         validator = factory.getValidator().forExecutables()
     }
 
-    def 'test getUser success with valid userEmailInput'() {
-        when:
-        def userEmailMock = "testUserEmail"
-        def result = getUserActivity.getUser(userEmailMock)
-        def expectedResult = Response.status(200).entity("getUser is called, email : " + userEmailMock).build()
-
-        then:
-        result.status == expectedResult.status
-        result.entity == expectedResult.entity
-    }
-
     @Unroll
     def 'test getUser validation check fail with null/empty userEmailInput'() {
         when:
@@ -55,5 +50,48 @@ class GetUserActivitySpec extends Specification {
         userEmailInput << [null, ""]
     }
 
+    def 'test getUser success with valid userEmailInput'() {
+        given:
+        def rawUserEmail = "testUserEmail"
+
+        when:
+        def result = getUserActivity.getUser(rawUserEmail)
+        def expectedResult = Response.status(200).entity("user is found. email : " + rawUserEmail).build()
+
+        then:
+        result.status == expectedResult.status
+        result.entity == expectedResult.entity
+
+        1 * getUserLogicMock.getUser(_ as UserEmail) >> new User(rawUserEmail)
+        0 * _
+    }
+
+    def 'test when DependencyFailureInternalException raised'() {
+        given:
+        def rawUserEmail = "testUserEmail"
+
+        when:
+        getUserActivity.getUser(rawUserEmail)
+
+        then:
+        thrown(DependencyFailureException)
+
+        1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new DependencyFailureInternalException("", new Exception())}
+        0 * _
+    }
+
+    def 'test when NoItemFoundException raised'() {
+        given:
+        def rawUserEmail = "testUserEmail"
+
+        when:
+        getUserActivity.getUser(rawUserEmail)
+
+        then:
+        thrown(ResourceNotFoundException)
+
+        1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new NoItemFoundException("")}
+        0 * _
+    }
 
 }

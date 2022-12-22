@@ -20,8 +20,14 @@ dependencies {
     implementation 'io.logz:guice-jersey:1.0.13'
 
     // Bean validation (both uses Hibernate validator)
+    // version 3 cannot be used since not compatible with Jersey-2.
     implementation 'org.glassfish.jersey.ext:jersey-bean-validation:2.37' // To be used with Jersey class resource
     implementation 'ru.vyarus:guice-validator:2.0.1' // To be used with Guice classes
+
+    //AWS SDK
+    implementation platform('software.amazon.awssdk:bom:2.17.0')
+    implementation 'software.amazon.awssdk:dynamodb'
+    implementation 'software.amazon.awssdk:dynamodb-enhanced'
 
     //Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
@@ -29,6 +35,7 @@ dependencies {
     //Spock Testing
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
     testImplementation group: 'cglib', name: 'cglib-nodep', version: '2.2'
+    testImplementation 'org.objenesis:objenesis:3.0.1'
 }
 
 jar {
