@@ -1,6 +1,5 @@
 package chorestogetherapiservice.datastore
 
-import chorestogetherapiservice.domain.UserEmail
 import spock.lang.Specification
 import spock.lang.Subject
 

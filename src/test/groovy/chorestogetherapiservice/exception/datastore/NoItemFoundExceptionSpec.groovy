@@ -1,6 +1,5 @@
 package chorestogetherapiservice.exception.datastore
 
-import chorestogetherapiservice.exception.activity.ResourceNotFoundException
 import spock.lang.Specification
 import spock.lang.Subject
 

@@ -10,15 +10,15 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @DynamoDbBean
 public class UserItem {
 
-    private String email;
+  private String email;
 
-    @DynamoDbPartitionKey
-    public String getEmail() {
-        return this.email;
-    }
+  @DynamoDbPartitionKey
+  public String getEmail() {
+    return this.email;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
 }

@@ -7,7 +7,6 @@ import chorestogetherapiservice.exception.activity.DependencyFailureException
 import chorestogetherapiservice.exception.activity.ResourceNotFoundException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.logic.GetUserLogic
-import chorestogetherapiservice.logic.GetUserLogicSpec
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll

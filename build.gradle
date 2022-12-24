@@ -1,6 +1,8 @@
 plugins {
     id 'groovy'
     id 'java'
+    id 'application' // requires for running application
+    id 'checkstyle'
 }
 
 group 'com.github.mikesukim'
@@ -38,16 +40,32 @@ dependencies {
     testImplementation 'org.objenesis:objenesis:3.0.1'
 }
 
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('build-test') {
+    dependsOn tasks.clean
+    dependsOn tasks.build
+    dependsOn tasks.test
+}
+
+tasks.register('run-server', JavaExec){
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'chorestogetherapiservice.ChoresTogetherAPIService'
+}
+
+// Checkstyle's version needed to be specified to be compatible with Google's checkstyle xml
+checkstyle {
+    toolVersion '10.5.0'
+}
+
+// To make jar executable, specifying manifest is required.
 jar {
-    // To make jar executable, specifying manifest is required.
     manifest {
         attributes(
                 'Main-Class': 'chorestogetherapiservice.ChoresTogetherAPIService',
                 'Class-Path': configurations.runtimeClasspath.files { it.getName() }.join(' ')
         )
     }
-}
-
-test {
-    useJUnitPlatform()
 }

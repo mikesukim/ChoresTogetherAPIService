@@ -1,6 +1,5 @@
 package chorestogetherapiservice.exception.mapper
 
-import chorestogetherapiservice.exception.mapper.RuntimeExceptionMapper
 import spock.lang.Specification
 import spock.lang.Subject
 

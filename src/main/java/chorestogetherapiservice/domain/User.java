@@ -1,15 +1,15 @@
 package chorestogetherapiservice.domain;
 
 public class User {
-    //TODO: create User Immutable class using Immutable library
+  //TODO: create User Immutable class using Immutable library
 
-    private final String email;
+  private final String email;
 
-    public User(String email) {
-        this.email = email;
-    }
+  public User(String email) {
+    this.email = email;
+  }
 
-    public String getEmail() {
-        return this.email;
-    }
+  public String getEmail() {
+    return this.email;
+  }
 }

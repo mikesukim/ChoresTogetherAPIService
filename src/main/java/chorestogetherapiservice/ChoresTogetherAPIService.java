@@ -10,31 +10,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.validator.ValidationModule;
 
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class ChoresTogetherAPIService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChoresTogetherAPIService.class);
-    public static void main(String[] args) throws Exception {
-        JerseyConfiguration configuration = JerseyConfiguration.builder()
-                .addPackage("chorestogetherapiservice")
-                .addPort(8080)
-                .build();
+  private static final Logger LOGGER = LoggerFactory.getLogger(ChoresTogetherAPIService.class);
 
-        Injector injector = Guice.createInjector(
-                new JerseyModule(configuration),
-                new ValidationModule(),
-                new AwsSdk2Module()
-        );
-        JerseyServer server = injector.getInstance(JerseyServer.class);
+  public static void main(String[] args) {
 
-        server.start();
-        LOGGER.info("server started");
+    JerseyConfiguration configuration = JerseyConfiguration.builder()
+        .addPackage("chorestogetherapiservice")
+        .addPort(8080)
+        .build();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                server.stop();
-                LOGGER.info("server stopped");
-            } catch (Exception e) {
-                LOGGER.error("exception occurred when stopping down server", e);
-            }
-        }));
+    Injector injector = Guice.createInjector(
+        new JerseyModule(configuration),
+        new ValidationModule(),
+        new AwsSdk2Module()
+    );
+    JerseyServer server = injector.getInstance(JerseyServer.class);
+
+    try {
+      server.start();
+
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          server.stop();
+          LOGGER.info("server stopped");
+        } catch (Exception e) {
+          LOGGER.error("exception occurred when stopping down server", e);
+        }
+      }));
+    } catch (Exception e) {
+      LOGGER.error("Error occurred while starting server. Error message: " + e.getMessage());
+      return;
     }
+    LOGGER.info("server started");
+  }
 }
