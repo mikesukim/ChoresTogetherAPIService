@@ -44,9 +44,10 @@ test {
     useJUnitPlatform()
 }
 
-tasks.register('build-test') {
+tasks.register('build-check-test') {
     dependsOn tasks.clean
     dependsOn tasks.build
+    dependsOn tasks.check
     dependsOn tasks.test
 }
 
@@ -55,7 +56,9 @@ tasks.register('run-server', JavaExec){
     mainClass = 'chorestogetherapiservice.ChoresTogetherAPIService'
 }
 
-// Checkstyle's version needed to be specified to be compatible with Google's checkstyle xml
+// Checkstyle's version needed to be specified to be compatible with Google's checkstyle
+// Google checkstyle rules :
+// https://checkstyle.org/styleguides/google-java-style-20180523/javaguide.html#s7.1-javadoc-formatting
 checkstyle {
     toolVersion '10.5.0'
 }

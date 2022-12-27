@@ -10,7 +10,11 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-
+/**
+ * Module to provide AWS related objects.
+ * It extends PrivateModule,
+ * since few object only needed to be exposed within this module. (e.x. dynamoDbClient)
+ */
 public class AwsSdk2Module extends PrivateModule {
 
   private static final String DYNAMODB_ENDPOINT = "local.us-west-2.dynamodb.endpoint.table.user";

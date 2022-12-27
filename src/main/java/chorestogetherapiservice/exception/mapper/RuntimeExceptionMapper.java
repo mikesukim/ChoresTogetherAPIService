@@ -9,8 +9,15 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// @Provider is required for ExceptionMapper to be detected by JAX-RS runtime.
-// https://docs.oracle.com/javaee/7/api/javax/ws/rs/ext/ExceptionMapper.html
+/**
+ * When RuntimeException occurs during the service handling the request,
+ * then this mapper will be executed and return response.
+ *
+ * <br>
+ * '@Provider' is required for
+ * <a href="https://docs.oracle.com/javaee/7/api/javax/ws/rs/ext/ExceptionMapper.html">ExceptionMapper</a>
+ * to be detected by JAX-RS runtime.
+ */
 @Provider
 @Singleton
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
@@ -27,7 +34,7 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
     }
     return Response
         .status(status)
-        // TODO : expose stackTrace only for development.
+        // TODO: expose stackTrace only for development.
         .entity("RuntimeExceptionMapper raised due to RuntimeException occurred. error message: "
             + exception.getMessage())
         .type(MediaType.APPLICATION_JSON_TYPE)

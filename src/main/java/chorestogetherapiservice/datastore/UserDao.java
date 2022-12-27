@@ -13,6 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
 
+/** Operation logics on User database. */
 @Singleton
 public class UserDao {
   private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
@@ -24,6 +25,13 @@ public class UserDao {
     this.table = dynamoDbClient.table(TABLE_NAME, TableSchema.fromBean(UserItem.class));
   }
 
+  /**
+   * Check if userEmail exists in database.
+   *
+   * @param  userEmail user's email to search.
+   * @return           If no result is found, Optional.Empty is returned.
+   *                   If found, Optional.of(User) is returned. */
+  @SuppressWarnings("checkstyle:JavadocParagraph")
   public Optional<UserItem> get(UserEmail userEmail) throws DependencyFailureInternalException {
     Optional<UserItem> resultItem;
     Key key = Key.builder()

@@ -8,6 +8,10 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * When ConstraintViolationException occurs due to validation failure,
+ * then this mapper will be executed and return response.
+ */
 @Provider
 @Singleton
 public class ConstraintViolationExceptionMapper implements

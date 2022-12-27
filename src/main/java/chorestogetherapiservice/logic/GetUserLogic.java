@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/** Business logic for GetUser API. */
 @Singleton
 public class GetUserLogic {
 
@@ -20,13 +21,19 @@ public class GetUserLogic {
     this.userDao = userDao;
   }
 
+  /**
+   * getUser business logic.
+   *
+   * @param  userEmail user's email as UserEmail type.
+   * @return           User if user exists, if not, raise NoItemFoundException.
+   * */
   public User getUser(UserEmail userEmail) throws
       DependencyFailureInternalException, NoItemFoundException {
     Optional<UserItem> userItem = userDao.get(userEmail);
     if (userItem.isEmpty()) {
       throw new NoItemFoundException("No user was found");
     }
-    //TODO : decouple converting logic
+    //TODO: decouple converting logic
     return new User(userItem.get().getEmail());
   }
 }

@@ -10,10 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.validator.ValidationModule;
 
+/** Main method of ChoresTogetherAPIService.*/
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class ChoresTogetherAPIService {
   private static final Logger LOGGER = LoggerFactory.getLogger(ChoresTogetherAPIService.class);
 
+  /**
+   * Main method of ChoresTogetherAPIService.
+   * it creates Guice Injector with given Modules and starts the server.
+   * JerseyModule is for binding jersey to Jetty server, with the configuring jetty server to use
+   * HK2-Guice bridge, so Guice can be used as DI for this project.
+   */
   public static void main(String[] args) {
 
     JerseyConfiguration configuration = JerseyConfiguration.builder()

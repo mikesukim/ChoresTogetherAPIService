@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+/** Module to provide Properties type, which is a instance for reading values from cfg file. */
 public class ConfigFileReaderModule extends AbstractModule {
 
   @Provides
