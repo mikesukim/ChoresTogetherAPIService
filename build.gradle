@@ -44,11 +44,16 @@ test {
     useJUnitPlatform()
 }
 
-tasks.register('build-check-test') {
+tasks.register('create-jar') {
     dependsOn tasks.clean
     dependsOn tasks.build
     dependsOn tasks.check
     dependsOn tasks.test
+    dependsOn tasks.jar
+
+    // When multiple dependsOn, its order is only guaranteed with mustRunAfter
+    tasks.findByName('build').mustRunAfter 'clean'
+    tasks.findByName('jar').mustRunAfter 'test'
 }
 
 tasks.register('run-server', JavaExec){
@@ -56,7 +61,7 @@ tasks.register('run-server', JavaExec){
     mainClass = 'chorestogetherapiservice.ChoresTogetherAPIService'
 }
 
-// Checkstyle's version needed to be specified to be compatible with Google's checkstyle
+// Checkstyle version needed to be specified to be compatible with Google's checkstyle
 // Google checkstyle rules :
 // https://checkstyle.org/styleguides/google-java-style-20180523/javaguide.html#s7.1-javadoc-formatting
 checkstyle {
