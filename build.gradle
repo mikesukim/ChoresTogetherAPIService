@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    //Logging
+    // Logging
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
     implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0'
 
@@ -26,15 +26,19 @@ dependencies {
     implementation 'org.glassfish.jersey.ext:jersey-bean-validation:2.37' // To be used with Jersey class resource
     implementation 'ru.vyarus:guice-validator:2.0.1' // To be used with Guice classes
 
-    //AWS SDK
+    // AWS SDK
     implementation platform('software.amazon.awssdk:bom:2.17.0')
     implementation 'software.amazon.awssdk:dynamodb'
     implementation 'software.amazon.awssdk:dynamodb-enhanced'
 
-    //Groovy
+    // Jackson
+    // https://github.com/FasterXML/jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+
+    // Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
 
-    //Spock Testing
+    // Spock Testing
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
     testImplementation group: 'cglib', name: 'cglib-nodep', version: '2.2'
     testImplementation 'org.objenesis:objenesis:3.0.1'
