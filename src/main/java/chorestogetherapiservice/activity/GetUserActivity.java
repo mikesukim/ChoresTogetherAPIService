@@ -1,6 +1,6 @@
 package chorestogetherapiservice.activity;
 
-import chorestogetherapiservice.domain.User;
+import chorestogetherapiservice.domain.JsonResponse;
 import chorestogetherapiservice.domain.UserEmail;
 import chorestogetherapiservice.exception.DependencyFailureInternalException;
 import chorestogetherapiservice.exception.activity.DependencyFailureException;
@@ -60,15 +60,14 @@ public class GetUserActivity {
   public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput)
       throws DependencyFailureInternalException {
     //TODO: decouple converting userEmailInput to UserEmail
-    User user;
     try {
-      user = getUserLogic.getUser(new UserEmail(userEmailInput));
+      getUserLogic.getUser(new UserEmail(userEmailInput));
     } catch (DependencyFailureInternalException e) {
       throw new DependencyFailureException("Dependency failed while executing logic.", e);
     } catch (NoItemFoundException e) {
       throw new ResourceNotFoundException("User is not found.", e);
     }
-    //TODO : return the result as Json
-    return Response.status(200).entity("user is found. email : " + user.getEmail()).build();
+    //TODO : decouple response generating logic
+    return Response.status(200).entity(new JsonResponse("success", "user exists", null)).build();
   }
 }

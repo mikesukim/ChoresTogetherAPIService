@@ -1,5 +1,6 @@
 package chorestogetherapiservice.activity
 
+import chorestogetherapiservice.domain.JsonResponse
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.DependencyFailureInternalException
@@ -52,14 +53,17 @@ class GetUserActivitySpec extends Specification {
     def 'test getUser success with valid userEmailInput'() {
         given:
         def rawUserEmail = "testUserEmail"
+        def expectedJsonResponse = new JsonResponse("success", "user exists", null)
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)
-        def expectedResult = Response.status(200).entity("user is found. email : " + rawUserEmail).build()
+        def expectedResult = Response.status(200).entity(expectedJsonResponse).build()
 
         then:
         result.status == expectedResult.status
-        result.entity == expectedResult.entity
+        def resultStatus = result.entity as JsonResponse
+        expectedJsonResponse.status == resultStatus.status
+        expectedJsonResponse.message == resultStatus.message
 
         1 * getUserLogicMock.getUser(_ as UserEmail) >> new User(rawUserEmail)
         0 * _

@@ -19,6 +19,8 @@ dependencies {
 
     // Jersey2-Guice
     // https://github.com/logzio/guice-jersey
+    // When updating this version, all jersey related libraries should be updated as well.
+    // e.x jersey-media-json-jackson, jersey-bean-validation
     implementation 'io.logz:guice-jersey:1.0.13'
 
     // Bean validation (both uses Hibernate validator)
@@ -33,7 +35,7 @@ dependencies {
 
     // Jackson
     // https://github.com/FasterXML/jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.37'
 
     // Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
