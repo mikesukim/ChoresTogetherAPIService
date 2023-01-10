@@ -3,6 +3,7 @@ package chorestogetherapiservice.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Response which server will return to request, as Json format.
@@ -23,10 +24,15 @@ public class JsonResponse {
   Map<String, String> data;
 
   //TODO: convert to Immutable
-  /** default constructor. */
-  public JsonResponse(String status, String message, Map<String, String> data) {
+  /** JsonResponse constructor.
+   *  If message or data is empty,
+   *  that field will not be present at the Json.
+   * */
+  public JsonResponse(String status,
+                      Optional<String> optionalMessage,
+                      Optional<Map<String, String>> optionalData) {
     this.status = status;
-    this.message = message;
-    this.data = data;
+    this.message = optionalMessage.orElse(null);
+    this.data = optionalData.orElse(null);
   }
 }

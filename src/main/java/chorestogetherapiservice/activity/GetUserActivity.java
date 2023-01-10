@@ -1,11 +1,11 @@
 package chorestogetherapiservice.activity;
 
-import chorestogetherapiservice.domain.JsonResponse;
 import chorestogetherapiservice.domain.UserEmail;
 import chorestogetherapiservice.exception.DependencyFailureInternalException;
 import chorestogetherapiservice.exception.activity.DependencyFailureException;
 import chorestogetherapiservice.exception.activity.ResourceNotFoundException;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
+import chorestogetherapiservice.handler.ResponseHandler;
 import chorestogetherapiservice.logic.GetUserLogic;
 import javax.inject.Inject;
 import javax.validation.constraints.NotEmpty;
@@ -43,9 +43,12 @@ public class GetUserActivity {
 
   GetUserLogic getUserLogic;
 
+  ResponseHandler responseHandler;
+
   @Inject
-  public GetUserActivity(GetUserLogic getUserLogic) {
+  public GetUserActivity(GetUserLogic getUserLogic, ResponseHandler responseHandler) {
     this.getUserLogic = getUserLogic;
+    this.responseHandler = responseHandler;
   }
 
   /**
@@ -67,7 +70,6 @@ public class GetUserActivity {
     } catch (NoItemFoundException e) {
       throw new ResourceNotFoundException("User is not found.", e);
     }
-    //TODO : decouple response generating logic
-    return Response.status(200).entity(new JsonResponse("success", "user exists", null)).build();
+    return responseHandler.generateSuccessResponse();
   }
 }

@@ -7,6 +7,7 @@ import chorestogetherapiservice.exception.DependencyFailureInternalException
 import chorestogetherapiservice.exception.activity.DependencyFailureException
 import chorestogetherapiservice.exception.activity.ResourceNotFoundException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
+import chorestogetherapiservice.handler.ResponseHandler
 import chorestogetherapiservice.logic.GetUserLogic
 import spock.lang.Specification
 import spock.lang.Subject
@@ -19,13 +20,17 @@ import javax.ws.rs.core.Response
 
 class GetUserActivitySpec extends Specification {
 
-    GetUserLogic getUserLogicMock = Mock(GetUserLogic.class)
+    def getUserLogicMock = Mock(GetUserLogic.class)
+
+    def responseHandlerMock = Mock(ResponseHandler.class)
+
+    def jsonResponseMock = Mock(JsonResponse.class)
 
     //TODO: import Spock.guice to inject Hibernate from Guice and remove validator initialization at setup()
     ExecutableValidator validator
 
     @Subject
-    GetUserActivity getUserActivity = new GetUserActivity(getUserLogicMock)
+    GetUserActivity getUserActivity = new GetUserActivity(getUserLogicMock, responseHandlerMock)
 
     def setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory()
@@ -53,19 +58,17 @@ class GetUserActivitySpec extends Specification {
     def 'test getUser success with valid userEmailInput'() {
         given:
         def rawUserEmail = "testUserEmail"
-        def expectedJsonResponse = new JsonResponse("success", "user exists", null)
+        def expectedResult = Response.status(200).entity(jsonResponseMock).build()
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)
-        def expectedResult = Response.status(200).entity(expectedJsonResponse).build()
 
         then:
         result.status == expectedResult.status
-        def resultStatus = result.entity as JsonResponse
-        expectedJsonResponse.status == resultStatus.status
-        expectedJsonResponse.message == resultStatus.message
+        result.entity == expectedResult.entity
 
         1 * getUserLogicMock.getUser(_ as UserEmail) >> new User(rawUserEmail)
+        1 * responseHandlerMock.generateSuccessResponse() >> expectedResult
         0 * _
     }
 
