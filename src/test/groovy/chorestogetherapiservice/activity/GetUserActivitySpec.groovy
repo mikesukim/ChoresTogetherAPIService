@@ -4,8 +4,6 @@ import chorestogetherapiservice.domain.JsonResponse
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.DependencyFailureInternalException
-import chorestogetherapiservice.exception.activity.DependencyFailureException
-import chorestogetherapiservice.exception.activity.ResourceNotFoundException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.handler.ResponseHandler
 import chorestogetherapiservice.logic.GetUserLogic
@@ -75,28 +73,34 @@ class GetUserActivitySpec extends Specification {
     def 'test when DependencyFailureInternalException raised'() {
         given:
         def rawUserEmail = "testUserEmail"
+        def expectedResult = Response.status(500).entity(jsonResponseMock).build()
 
         when:
-        getUserActivity.getUser(rawUserEmail)
+        def result = getUserActivity.getUser(rawUserEmail)
 
         then:
-        thrown(DependencyFailureException)
+        result.status == expectedResult.status
+        result.entity == expectedResult.entity
 
         1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new DependencyFailureInternalException("", new Exception())}
+        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
         0 * _
     }
 
     def 'test when NoItemFoundException raised'() {
         given:
         def rawUserEmail = "testUserEmail"
+        def expectedResult = Response.status(400).entity(jsonResponseMock).build()
 
         when:
-        getUserActivity.getUser(rawUserEmail)
+        def result = getUserActivity.getUser(rawUserEmail)
 
         then:
-        thrown(ResourceNotFoundException)
+        result.status == expectedResult.status
+        result.entity == expectedResult.entity
 
         1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new NoItemFoundException("")}
+        1 * responseHandlerMock.generateErrorResponseWith(_) >> expectedResult
         0 * _
     }
 

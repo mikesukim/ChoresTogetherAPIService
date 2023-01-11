@@ -1,8 +1,8 @@
 package chorestogetherapiservice.exception.mapper;
 
-import javax.inject.Singleton;
+import chorestogetherapiservice.handler.ResponseHandler;
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -19,10 +19,16 @@ import org.slf4j.LoggerFactory;
  * to be detected by JAX-RS runtime.
  */
 @Provider
-@Singleton
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RuntimeExceptionMapper.class);
+
+  ResponseHandler responseHandler;
+
+  @Inject
+  public RuntimeExceptionMapper(ResponseHandler responseHandler) {
+    this.responseHandler = responseHandler;
+  }
 
   @Override
   public Response toResponse(RuntimeException exception) {
@@ -32,12 +38,6 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
       WebApplicationException webApplicationException = (WebApplicationException) exception;
       status = webApplicationException.getResponse().getStatus();
     }
-    return Response
-        .status(status)
-        // TODO: expose stackTrace only for development.
-        .entity("RuntimeExceptionMapper raised due to RuntimeException occurred. error message: "
-            + exception.getMessage())
-        .type(MediaType.APPLICATION_JSON_TYPE)
-        .build();
+    return responseHandler.generateFailResponseWith("runtime exception occurred");
   }
 }
