@@ -1,4 +1,4 @@
-package chorestogetherapiservice.exception;
+package chorestogetherapiservice.exception.dependency;
 
 /**
  * this exception should be raised,

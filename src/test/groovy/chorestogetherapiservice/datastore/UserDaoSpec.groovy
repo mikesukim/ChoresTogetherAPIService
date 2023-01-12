@@ -1,7 +1,7 @@
 package chorestogetherapiservice.datastore
 
 import chorestogetherapiservice.domain.UserEmail
-import chorestogetherapiservice.exception.DependencyFailureInternalException
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema

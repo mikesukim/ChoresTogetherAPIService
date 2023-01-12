@@ -3,7 +3,7 @@ package chorestogetherapiservice.activity
 import chorestogetherapiservice.domain.JsonResponse
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
-import chorestogetherapiservice.exception.DependencyFailureInternalException
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.handler.ResponseHandler
 import chorestogetherapiservice.logic.GetUserLogic

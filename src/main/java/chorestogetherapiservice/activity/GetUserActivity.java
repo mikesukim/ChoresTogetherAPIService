@@ -1,8 +1,8 @@
 package chorestogetherapiservice.activity;
 
 import chorestogetherapiservice.domain.UserEmail;
-import chorestogetherapiservice.exception.DependencyFailureInternalException;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import chorestogetherapiservice.handler.ResponseHandler;
 import chorestogetherapiservice.logic.GetUserLogic;
 import javax.inject.Inject;

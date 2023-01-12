@@ -1,7 +1,7 @@
 package chorestogetherapiservice.datastore;
 
 import chorestogetherapiservice.domain.UserEmail;
-import chorestogetherapiservice.exception.DependencyFailureInternalException;
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
