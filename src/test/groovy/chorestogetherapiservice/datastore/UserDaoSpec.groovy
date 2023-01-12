@@ -1,5 +1,6 @@
 package chorestogetherapiservice.datastore
 
+import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
@@ -28,7 +29,7 @@ class UserDaoSpec extends Specification {
         given:
         def userItem = new UserItem()
         userItem.setEmail(email)
-        def userEmail = new UserEmail(email)
+        def userEmail = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmail)
@@ -45,7 +46,7 @@ class UserDaoSpec extends Specification {
         given:
         def userItem = new UserItem()
         userItem.setEmail(email)
-        def userEmailMock = new UserEmail(email)
+        def userEmailMock = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmailMock)
@@ -62,7 +63,7 @@ class UserDaoSpec extends Specification {
         given:
         def userItem = new UserItem()
         userItem.setEmail(email)
-        def userEmailMock = new UserEmail(email)
+        def userEmailMock = ImmutableUserEmail.builder().email(email).build()
 
         when:
         userDao.get(userEmailMock)

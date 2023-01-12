@@ -3,6 +3,7 @@ package chorestogetherapiservice.logic
 import chorestogetherapiservice.datastore.UserDao
 import chorestogetherapiservice.datastore.UserItem
 import chorestogetherapiservice.datastore.UserItemSpec
+import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
@@ -18,7 +19,7 @@ class GetUserLogicSpec extends Specification {
 
     def "test success getUser"() {
         given:
-        def userEmail = new UserEmail("fake@gmail.com")
+        def userEmail = ImmutableUserEmail.builder().email("fake@gmail.com").build()
         def userItem = new UserItem()
         userItem.setEmail("fake@gmail.com")
         def user = new User("fake@gmail.com")
@@ -36,7 +37,7 @@ class GetUserLogicSpec extends Specification {
 
     def "test raising NoItemFoundException when no user was found"() {
         given:
-        def userEmail = new UserEmail("fake@gmail.com")
+        def userEmail = ImmutableUserEmail.builder().email("fake@gmail.com").build()
         def userItem = new UserItem()
         userItem.setEmail("fake@gmail.com")
 

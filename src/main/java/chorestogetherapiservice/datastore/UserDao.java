@@ -1,6 +1,6 @@
 package chorestogetherapiservice.datastore;
 
-import chorestogetherapiservice.domain.UserEmail;
+import chorestogetherapiservice.domain.ImmutableUserEmail;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -28,14 +28,15 @@ public class UserDao {
   /**
    * Check if userEmail exists in database.
    *
-   * @param  userEmail user's email to search.
-   * @return           If no result is found, Optional.Empty is returned.
-   *                   If found, Optional.of(User) is returned. */
+   * @param  immutableUserEmail user's email to search.
+   * @return                    If no result is found, Optional.Empty is returned.
+   *                            If found, Optional.of(User) is returned. */
   @SuppressWarnings("checkstyle:JavadocParagraph")
-  public Optional<UserItem> get(UserEmail userEmail) throws DependencyFailureInternalException {
+  public Optional<UserItem> get(ImmutableUserEmail immutableUserEmail)
+      throws DependencyFailureInternalException {
     Optional<UserItem> resultItem;
     Key key = Key.builder()
-        .partitionValue(userEmail.getEmail())
+        .partitionValue(immutableUserEmail.getEmail())
         .build();
     try {
       resultItem = Optional.ofNullable(

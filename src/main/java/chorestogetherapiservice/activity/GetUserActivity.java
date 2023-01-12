@@ -1,6 +1,6 @@
 package chorestogetherapiservice.activity;
 
-import chorestogetherapiservice.domain.UserEmail;
+import chorestogetherapiservice.domain.ImmutableUserEmail;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import chorestogetherapiservice.handler.ResponseHandler;
@@ -60,10 +60,13 @@ public class GetUserActivity {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput)
       throws DependencyFailureInternalException {
-
-    //TODO: decouple converting userEmailInput to UserEmail
     try {
-      getUserLogic.getUser(new UserEmail(userEmailInput));
+      //TODO: decouple converting userEmailInput to UserEmail
+      ImmutableUserEmail immutableUserEmail =
+          ImmutableUserEmail.builder()
+              .email(userEmailInput)
+              .build();
+      getUserLogic.getUser(immutableUserEmail);
     } catch (DependencyFailureInternalException e) {
       return responseHandler.generateFailResponseWith(e.getMessage());
     } catch (NoItemFoundException e) {

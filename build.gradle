@@ -37,6 +37,14 @@ dependencies {
     // https://github.com/FasterXML/jackson
     implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.37'
 
+    // Immutables
+    // http://immutables.github.io
+    def immutablesVersion = "2.9.2"
+    // annotationProcessor is required for Gradle to process annotation processing
+    // https://stackoverflow.com/questions/47351968/how-to-make-githubs-immutables-work-in-intellij-gradle/59917737#59917737
+    annotationProcessor "org.immutables:value:$immutablesVersion"
+    implementation "org.immutables:value:$immutablesVersion"
+
     // Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
 
