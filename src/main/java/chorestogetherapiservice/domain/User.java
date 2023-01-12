@@ -1,20 +1,17 @@
 package chorestogetherapiservice.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.immutables.value.Value;
+
 /**
  * Immutable User type.
  * All user related parameters from request needs to be transformed into this type,
  * and all classes from this service use this type for type safety.
  */
-public class User {
-  //TODO: create User Immutable class using Immutable library
-
-  private final String email;
-
-  public User(String email) {
-    this.email = email;
-  }
-
-  public String getEmail() {
-    return this.email;
-  }
+@Value.Immutable
+@JsonSerialize(as = ImmutableUser.class)
+@JsonDeserialize(as = ImmutableUser.class)
+public interface User {
+  String getEmail();
 }

@@ -8,7 +8,7 @@ class UserSpec extends Specification {
     def email = "fake@email.com"
 
     @Subject
-    User user = new User(email)
+    User user = ImmutableUser.builder().email(email).build()
 
     def "test getEmail"() {
         when:

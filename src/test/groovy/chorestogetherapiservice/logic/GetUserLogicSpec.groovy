@@ -22,7 +22,7 @@ class GetUserLogicSpec extends Specification {
         def userEmail = ImmutableUserEmail.builder().email("fake@gmail.com").build()
         def userItem = new UserItem()
         userItem.setEmail("fake@gmail.com")
-        def user = new User("fake@gmail.com")
+        def user = ImmutableUserEmail.builder().email("fake@gmail.com").build()
 
         when:
         def result = getUserLogic.getUser(userEmail)

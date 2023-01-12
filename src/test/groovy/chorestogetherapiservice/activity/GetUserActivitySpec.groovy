@@ -1,5 +1,7 @@
 package chorestogetherapiservice.activity
 
+import chorestogetherapiservice.domain.ImmutableUser
+import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.domain.JsonResponse
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
@@ -65,7 +67,7 @@ class GetUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * getUserLogicMock.getUser(_ as UserEmail) >> new User(rawUserEmail)
+        1 * getUserLogicMock.getUser(_ as UserEmail) >> ImmutableUser.builder().email("fake@gmail.com").build()
         1 * responseHandlerMock.generateSuccessResponse() >> expectedResult
         0 * _
     }

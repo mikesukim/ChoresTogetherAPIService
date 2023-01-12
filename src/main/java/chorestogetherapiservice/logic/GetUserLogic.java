@@ -2,8 +2,9 @@ package chorestogetherapiservice.logic;
 
 import chorestogetherapiservice.datastore.UserDao;
 import chorestogetherapiservice.datastore.UserItem;
-import chorestogetherapiservice.domain.ImmutableUserEmail;
+import chorestogetherapiservice.domain.ImmutableUser;
 import chorestogetherapiservice.domain.User;
+import chorestogetherapiservice.domain.UserEmail;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import java.util.Optional;
@@ -24,16 +25,16 @@ public class GetUserLogic {
   /**
    * getUser business logic.
    *
-   * @param  immutableUserEmail user's email as UserEmail type.
+   * @param  userEmail user's email as UserEmail type.
    * @return                    User if user exists, if not, raise NoItemFoundException.
    * */
-  public User getUser(ImmutableUserEmail immutableUserEmail) throws
+  public User getUser(UserEmail userEmail) throws
       DependencyFailureInternalException, NoItemFoundException {
-    Optional<UserItem> userItem = userDao.get(immutableUserEmail);
+    Optional<UserItem> userItem = userDao.get(userEmail);
     if (userItem.isEmpty()) {
       throw new NoItemFoundException("No user was found");
     }
     //TODO: decouple converting logic
-    return new User(userItem.get().getEmail());
+    return ImmutableUser.builder().email(userItem.get().getEmail()).build();
   }
 }
