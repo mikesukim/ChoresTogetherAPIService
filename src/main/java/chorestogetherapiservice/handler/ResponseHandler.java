@@ -1,8 +1,7 @@
 package chorestogetherapiservice.handler;
 
-import chorestogetherapiservice.domain.JsonResponse;
+import chorestogetherapiservice.domain.ImmutableResponseEntity;
 import java.util.Map;
-import java.util.Optional;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
 
@@ -27,8 +26,7 @@ public class ResponseHandler {
     return Response
         .status(HTTP_OK_STATUS_CODE)
         .entity(
-            new JsonResponse(
-                SUCCESS_STATUS, Optional.empty(), Optional.empty())
+            ImmutableResponseEntity.builder().status(SUCCESS_STATUS).build()
         ).build();
   }
 
@@ -37,8 +35,7 @@ public class ResponseHandler {
     return Response
         .status(HTTP_OK_STATUS_CODE)
         .entity(
-            new JsonResponse(
-                SUCCESS_STATUS, Optional.empty(), Optional.of(data))
+            ImmutableResponseEntity.builder().status(SUCCESS_STATUS).data(data).build()
         ).build();
   }
 
@@ -51,8 +48,7 @@ public class ResponseHandler {
         //  which can describe the actual error reason.
         .status(HTTP_BAD_REQUEST_ERROR_STATUS_CODE)
         .entity(
-            new JsonResponse(
-                ERROR_STATUS, Optional.of(message), Optional.empty())
+            ImmutableResponseEntity.builder().status(ERROR_STATUS).message(message).build()
         ).build();
   }
 
@@ -61,8 +57,7 @@ public class ResponseHandler {
     return Response
         .status(HTTP_FAIL_STATUS_CODE)
         .entity(
-            new JsonResponse(
-                FAIL_STATUS, Optional.of(message), Optional.empty())
+            ImmutableResponseEntity.builder().status(FAIL_STATUS).message(message).build()
         ).build();
   }
 }

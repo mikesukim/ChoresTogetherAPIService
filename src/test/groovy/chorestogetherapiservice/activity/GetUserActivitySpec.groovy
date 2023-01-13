@@ -1,9 +1,7 @@
 package chorestogetherapiservice.activity
 
 import chorestogetherapiservice.domain.ImmutableUser
-import chorestogetherapiservice.domain.ImmutableUserEmail
-import chorestogetherapiservice.domain.JsonResponse
-import chorestogetherapiservice.domain.User
+import chorestogetherapiservice.domain.ResponseEntity
 import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
@@ -24,7 +22,7 @@ class GetUserActivitySpec extends Specification {
 
     def responseHandlerMock = Mock(ResponseHandler.class)
 
-    def jsonResponseMock = Mock(JsonResponse.class)
+    def responseEntityMock = Mock(ResponseEntity.class)
 
     //TODO: import Spock.guice to inject Hibernate from Guice and remove validator initialization at setup()
     ExecutableValidator validator
@@ -58,7 +56,7 @@ class GetUserActivitySpec extends Specification {
     def 'test getUser success with valid userEmailInput'() {
         given:
         def rawUserEmail = "testUserEmail"
-        def expectedResult = Response.status(200).entity(jsonResponseMock).build()
+        def expectedResult = Response.status(200).entity(responseEntityMock).build()
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)
@@ -75,7 +73,7 @@ class GetUserActivitySpec extends Specification {
     def 'test when DependencyFailureInternalException raised'() {
         given:
         def rawUserEmail = "testUserEmail"
-        def expectedResult = Response.status(500).entity(jsonResponseMock).build()
+        def expectedResult = Response.status(500).entity(responseEntityMock).build()
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)
@@ -92,7 +90,7 @@ class GetUserActivitySpec extends Specification {
     def 'test when NoItemFoundException raised'() {
         given:
         def rawUserEmail = "testUserEmail"
-        def expectedResult = Response.status(400).entity(jsonResponseMock).build()
+        def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)

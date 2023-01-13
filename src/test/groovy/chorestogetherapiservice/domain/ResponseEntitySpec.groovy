@@ -4,22 +4,22 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
-class JsonResponseSpec extends Specification {
+class ResponseEntitySpec extends Specification {
 
     private final String SUCCESS_STATUS = "success"
 
     @Subject
-    JsonResponse jsonResponse
+    ResponseEntity responseEntity
 
     @Shared
     def dataMock = new HashMap<String, String>()
     @Shared
     def messageMock = "message"
 
-    def "test successful constructing jsonResponse"() {
+    def "test successful constructing ResponseEntity"() {
 
         when:
-        jsonResponse = new JsonResponse(SUCCESS_STATUS, message, data)
+        responseEntity = ImmutableResponseEntity.builder().status(SUCCESS_STATUS).message(messageMock).data(dataMock).build()
 
         then:
         notThrown(NullPointerException)
