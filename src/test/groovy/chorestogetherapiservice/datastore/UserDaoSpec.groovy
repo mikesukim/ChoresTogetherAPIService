@@ -2,6 +2,7 @@ package chorestogetherapiservice.datastore
 
 import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.domain.UserEmail
+import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
@@ -27,42 +28,36 @@ class UserDaoSpec extends Specification {
 
     def "test success get user"() {
         given:
-        def userItem = new UserItem()
-        userItem.setEmail(email)
+        def userItem = new UserItemBuilder().email(email).build()
         def userEmail = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmail)
-        def expectedResult = Optional<UserItem>.of(userItem)
+        def expectedResult = new UserItemBuilder().email(email).build()
 
         then:
         result == expectedResult
 
-        1 * tableMock.getItem(_ as Consumer<GetItemEnhancedRequest.Builder>) >> userItem
+        1 * tableMock.getItem(_) >> userItem
         0 * _
     }
 
     def "test when no item was found"() {
         given:
-        def userItem = new UserItem()
-        userItem.setEmail(email)
         def userEmailMock = ImmutableUserEmail.builder().email(email).build()
 
         when:
-        def result = userDao.get(userEmailMock)
-        def expectedResult = Optional<UserItem>.empty()
+        userDao.get(userEmailMock)
 
         then:
-        result == expectedResult
+        thrown(NoItemFoundException)
 
-        1 * tableMock.getItem(_ as Consumer<GetItemEnhancedRequest.Builder>) >> null
+        1 * tableMock.getItem(_) >> null
         0 * _
     }
 
     def "test when dynamodb internal failure"() {
         given:
-        def userItem = new UserItem()
-        userItem.setEmail(email)
         def userEmailMock = ImmutableUserEmail.builder().email(email).build()
 
         when:
@@ -71,7 +66,7 @@ class UserDaoSpec extends Specification {
         then:
         thrown(DependencyFailureInternalException)
 
-        1 * tableMock.getItem(_ as Consumer<GetItemEnhancedRequest.Builder>) >> new Exception()
+        1 * tableMock.getItem(_) >> new Exception()
         0 * _
     }
 }

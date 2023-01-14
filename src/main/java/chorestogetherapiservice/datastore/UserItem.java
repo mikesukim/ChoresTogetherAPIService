@@ -1,23 +1,20 @@
 package chorestogetherapiservice.datastore;
 
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import chorestogetherapiservice.immutablesstyles.DynamoDbImmutableStyle;
+import org.immutables.value.Value;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
-/** bean class which is used by DynamoDb-enhanced-client to be mapped with the User table.
- *  More info : <a href="https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html">dynamodb-enhanced-doc</a>*/
-//TODO: switch @DynamoDbBean to @DynamoDbImmutable
-@DynamoDbBean
-public class UserItem {
+/** User Immutable class which is used by DynamoDb-enhanced-client to be mapped with the User table.
+ *  More info :
+ *  <a href="https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html">dynamodb-enhanced-doc</a>
+ *  <a href="https://github.com/aws/aws-sdk-java-v2/tree/master/services-custom/dynamodb-enhanced#working-with-immutable-data-classes">working-with-immutable-data-classes</a>*/
 
-  private String email;
+@Value.Immutable
+@DynamoDbImmutableStyle
+@DynamoDbImmutable(builder = UserItemBuilder.class)
+public interface UserItem {
 
   @DynamoDbPartitionKey
-  public String getEmail() {
-    return this.email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
+  String getEmail();
 }

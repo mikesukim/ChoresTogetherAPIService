@@ -8,13 +8,9 @@ class UserItemSpec extends Specification {
     def email = "fake@email.com"
 
     @Subject
-    UserItem userItem = new UserItem()
+    UserItem userItem = new UserItemBuilder().email(email).build()
 
-    def "test setEmail"() {
-        when:
-        userItem.setEmail(email)
-
-        then:
+    def "test getEmail"() {
         userItem.getEmail() == email
     }
 }

@@ -1,17 +1,15 @@
 package chorestogetherapiservice.datastore;
 
 import chorestogetherapiservice.domain.UserEmail;
+import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
-import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest;
 
 /** Operation logics on User database. */
 @Singleton
@@ -22,7 +20,7 @@ public class UserDao {
 
   @Inject
   public UserDao(DynamoDbEnhancedClient dynamoDbClient) {
-    this.table = dynamoDbClient.table(TABLE_NAME, TableSchema.fromBean(UserItem.class));
+    this.table = dynamoDbClient.table(TABLE_NAME, TableSchema.fromImmutableClass(UserItem.class));
   }
 
   /**
@@ -32,20 +30,19 @@ public class UserDao {
    * @return                    If no result is found, Optional.Empty is returned.
    *                            If found, Optional.of(User) is returned. */
   @SuppressWarnings("checkstyle:JavadocParagraph")
-  public Optional<UserItem> get(UserEmail userEmail)
+  public UserItem get(UserEmail userEmail)
       throws DependencyFailureInternalException {
-    Optional<UserItem> resultItem;
-    Key key = Key.builder()
-        .partitionValue(userEmail.getEmail())
-        .build();
+    UserItem key =  new UserItemBuilder().email(userEmail.getEmail()).build();
+    UserItem userItem;
     try {
-      resultItem = Optional.ofNullable(
-          table.getItem(
-              (GetItemEnhancedRequest.Builder requestBuilder) -> requestBuilder.key(key)));
+      userItem = table.getItem(key);
     } catch (Exception e) {
       LOGGER.error("DynamoDB exception occurred. Error message : " + e.getMessage());
       throw new DependencyFailureInternalException("DynamoDB exception occurred", e);
     }
-    return resultItem;
+    if (userItem == null) {
+      throw new NoItemFoundException("User is not found at database");
+    }
+    return userItem;
   }
 }

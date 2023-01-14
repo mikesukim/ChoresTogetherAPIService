@@ -7,7 +7,6 @@ import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.domain.UserEmail;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
-import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,11 +29,7 @@ public class GetUserLogic {
    * */
   public User getUser(UserEmail userEmail) throws
       DependencyFailureInternalException, NoItemFoundException {
-    Optional<UserItem> userItem = userDao.get(userEmail);
-    if (userItem.isEmpty()) {
-      throw new NoItemFoundException("No user was found");
-    }
-    //TODO: decouple converting logic
-    return ImmutableUser.builder().email(userItem.get().getEmail()).build();
+    UserItem userItem = userDao.get(userEmail);
+    return ImmutableUser.builder().email(userItem.getEmail()).build();
   }
 }
