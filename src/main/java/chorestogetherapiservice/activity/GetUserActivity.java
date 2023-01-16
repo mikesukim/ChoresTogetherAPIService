@@ -28,13 +28,11 @@ import javax.ws.rs.core.Response;
  * if instance not found, then Guice injector will be checked.
  *
  * <br>
- * '@RequestedScope' is a default life cycle for the jersey class resource (or JAR-RX)
+ * '@RequestedScope' is a default life cycle for the jersey class resource (or JAR-RX).
  * <a href="https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/jaxrs-resources.html#d0e2692">
- *   jersey's life cycle description </a>
- * and using default life cycle instead of @Singleton is preferred since
- * 1) there's no high performance issue, 2) @Singleton can't be used with
- * passing @QueryParam as a field.
- *
+ *   (jersey's life cycle description) </a>
+ * Instead of '@Singleton', default life cycle is used following
+ * <a href="https://stackoverflow.com/questions/30409895/jax-rs-resource-lifecycle-performance-impact">this discussion</a>.
  */
 @Path("/users")
 public class GetUserActivity {

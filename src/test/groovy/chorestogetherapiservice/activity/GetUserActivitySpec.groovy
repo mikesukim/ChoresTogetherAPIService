@@ -55,7 +55,7 @@ class GetUserActivitySpec extends Specification {
 
     def 'test getUser success with valid userEmailInput'() {
         given:
-        def rawUserEmail = "testUserEmail"
+        def rawUserEmail = "testUserEmail@email.com"
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
 
         when:
@@ -72,7 +72,7 @@ class GetUserActivitySpec extends Specification {
 
     def 'test when DependencyFailureInternalException raised'() {
         given:
-        def rawUserEmail = "testUserEmail"
+        def rawUserEmail = "testUserEmail@gmail.com"
         def expectedResult = Response.status(500).entity(responseEntityMock).build()
 
         when:
@@ -89,7 +89,7 @@ class GetUserActivitySpec extends Specification {
 
     def 'test when NoItemFoundException raised'() {
         given:
-        def rawUserEmail = "testUserEmail"
+        def rawUserEmail = "testUserEmail@gmail.com"
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:

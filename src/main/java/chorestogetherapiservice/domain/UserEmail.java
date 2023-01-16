@@ -1,5 +1,7 @@
 package chorestogetherapiservice.domain;
 
+import chorestogetherapiservice.util.StringPatternCheckUtil;
+import com.google.common.base.Preconditions;
 import org.immutables.value.Value;
 
 /**
@@ -11,4 +13,12 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface UserEmail {
   String getEmail();
+
+  @SuppressWarnings("checkstyle:MissingJavadocMethod")
+  @Value.Check
+  default void check() {
+    Preconditions.checkState(
+        StringPatternCheckUtil.checkEmailPattern(getEmail()),
+        "email format is not correct");
+  }
 }

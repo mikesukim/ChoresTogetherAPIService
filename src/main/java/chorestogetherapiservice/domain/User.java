@@ -1,7 +1,9 @@
 package chorestogetherapiservice.domain;
 
+import chorestogetherapiservice.util.StringPatternCheckUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.Preconditions;
 import org.immutables.value.Value;
 
 /**
@@ -14,4 +16,16 @@ import org.immutables.value.Value;
 @JsonDeserialize(as = ImmutableUser.class)
 public interface User {
   String getEmail();
+
+  /**
+   *  Before creating immutables, check if attributes are in correct format.
+   *  if not, cancel building immutable and raise error.
+   *  <a href="https://immutables.github.io/immutable.html#precondition-check-method">more info</a>
+   */
+  @Value.Check
+  default void check() {
+    Preconditions.checkState(
+        StringPatternCheckUtil.checkEmailPattern(getEmail()),
+        "email format is not correct");
+  }
 }
