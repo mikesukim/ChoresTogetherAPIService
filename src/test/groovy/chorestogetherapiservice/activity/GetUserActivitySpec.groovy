@@ -100,7 +100,7 @@ class GetUserActivitySpec extends Specification {
         result.entity == expectedResult.entity
 
         1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new NoItemFoundException("")}
-        1 * responseHandlerMock.generateErrorResponseWith(_) >> expectedResult
+        1 * responseHandlerMock.generateResourceNotFoundErrorResponseWith(_) >> expectedResult
         0 * _
     }
 

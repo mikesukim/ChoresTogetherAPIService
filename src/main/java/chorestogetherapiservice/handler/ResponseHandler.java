@@ -1,8 +1,10 @@
 package chorestogetherapiservice.handler;
 
 import chorestogetherapiservice.domain.ImmutableResponseEntity;
+import chorestogetherapiservice.domain.ResponseEntity;
 import java.util.Map;
 import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /** Generates response for the request.
@@ -16,6 +18,7 @@ public class ResponseHandler {
 
   private final int HTTP_OK_STATUS_CODE = 200;
   private final int HTTP_BAD_REQUEST_ERROR_STATUS_CODE = 400;
+  private final int HTTP_NO_RESOURCE_FOUND_STATUS_CODE = 404;
   private final int HTTP_FAIL_STATUS_CODE = 500;
   private final String SUCCESS_STATUS = "success";
   private final String ERROR_STATUS = "error";
@@ -23,41 +26,53 @@ public class ResponseHandler {
 
   /** generate success Response without any data. */
   public Response generateSuccessResponse() {
-    return Response
-        .status(HTTP_OK_STATUS_CODE)
-        .entity(
-            ImmutableResponseEntity.builder().status(SUCCESS_STATUS).build()
-        ).build();
+    return generateJsonTypeResponseWith(HTTP_OK_STATUS_CODE, ImmutableResponseEntity
+        .builder()
+        .status(SUCCESS_STATUS)
+        .build());
   }
 
   /** generate success Response with data. */
   public Response generateSuccessResponseWith(Map<String, String> data) {
-    return Response
-        .status(HTTP_OK_STATUS_CODE)
-        .entity(
-            ImmutableResponseEntity.builder().status(SUCCESS_STATUS).data(data).build()
-        ).build();
+    return generateJsonTypeResponseWith(HTTP_OK_STATUS_CODE, ImmutableResponseEntity
+        .builder()
+        .status(SUCCESS_STATUS)
+        .data(data)
+        .build());
   }
 
-  /** generate error Response. */
-  public Response generateErrorResponseWith(String message) {
-    return Response
-        // TODO:
-        //  now all error response is treated as 400 status code.
-        //  Update to return other error status codes as well,
-        //  which can describe the actual error reason.
-        .status(HTTP_BAD_REQUEST_ERROR_STATUS_CODE)
-        .entity(
-            ImmutableResponseEntity.builder().status(ERROR_STATUS).message(message).build()
-        ).build();
+  /** generate bad request error Response. */
+  public Response generateBadRequestErrorResponseWith(String message) {
+    return generateJsonTypeResponseWith(HTTP_BAD_REQUEST_ERROR_STATUS_CODE, ImmutableResponseEntity
+        .builder()
+        .status(ERROR_STATUS)
+        .message(message)
+        .build());
+  }
+
+  /** generate no resource item error Response. */
+  public Response generateResourceNotFoundErrorResponseWith(String message) {
+    return generateJsonTypeResponseWith(HTTP_NO_RESOURCE_FOUND_STATUS_CODE, ImmutableResponseEntity
+        .builder()
+        .status(ERROR_STATUS)
+        .message(message)
+        .build());
   }
 
   /** generate fail Response. */
   public Response generateFailResponseWith(String message) {
+    return generateJsonTypeResponseWith(HTTP_FAIL_STATUS_CODE, ImmutableResponseEntity
+        .builder()
+        .status(FAIL_STATUS)
+        .message(message)
+        .build());
+  }
+
+  private Response generateJsonTypeResponseWith(int status, ResponseEntity responseEntity) {
     return Response
-        .status(HTTP_FAIL_STATUS_CODE)
-        .entity(
-            ImmutableResponseEntity.builder().status(FAIL_STATUS).message(message).build()
-        ).build();
+        .status(status)
+        .entity(responseEntity)
+        .type(MediaType.APPLICATION_JSON)
+        .build();
   }
 }

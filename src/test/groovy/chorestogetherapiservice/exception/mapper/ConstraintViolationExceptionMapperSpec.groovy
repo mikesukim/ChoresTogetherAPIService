@@ -36,7 +36,7 @@ class ConstraintViolationExceptionMapperSpec extends Specification {
         response.getMediaType() == response.getMediaType()
         response.getStatus() == response.getStatus()
 
-        1 * responseHandlerMock.generateErrorResponseWith(_) >> expectedResponse
+        1 * responseHandlerMock.generateBadRequestErrorResponseWith(_) >> expectedResponse
         0 * _
     }
 }

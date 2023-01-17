@@ -29,6 +29,6 @@ public class ConstraintViolationExceptionMapper implements
   @Override
   public Response toResponse(ConstraintViolationException exception) {
     LOGGER.debug("ConstraintViolationException is invoked with the error message : ", exception);
-    return responseHandler.generateErrorResponseWith("request constraint violated");
+    return responseHandler.generateBadRequestErrorResponseWith("request constraint violated");
   }
 }

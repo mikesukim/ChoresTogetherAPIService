@@ -29,6 +29,6 @@ public class JsonMappingExceptionMapper implements
 
   @Override
   public Response toResponse(JsonMappingException exception) {
-    return responseHandler.generateErrorResponseWith(exception.getMessage());
+    return responseHandler.generateBadRequestErrorResponseWith(exception.getMessage());
   }
 }

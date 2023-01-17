@@ -68,7 +68,7 @@ public class GetUserActivity {
     } catch (DependencyFailureInternalException e) {
       return responseHandler.generateFailResponseWith(e.getMessage());
     } catch (NoItemFoundException e) {
-      return responseHandler.generateErrorResponseWith(e.getMessage());
+      return responseHandler.generateResourceNotFoundErrorResponseWith(e.getMessage());
     }
     return responseHandler.generateSuccessResponse();
   }
