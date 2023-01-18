@@ -11,6 +11,7 @@ import chorestogetherapiservice.domain.UserEmail
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import spock.lang.Specification
 import spock.lang.Subject
+import java.time.Instant
 
 class GetUserLogicSpec extends Specification {
 
@@ -22,7 +23,7 @@ class GetUserLogicSpec extends Specification {
     def "test success getUser"() {
         given:
         def userEmail = ImmutableUserEmail.builder().email("fake@gmail.com").build()
-        def userItem = new UserItemBuilder().email("fake@gmail.com").build()
+        def userItem = new UserItemBuilder().email("fake@gmail.com").registrationDate(Instant.now()).build()
         def user = ImmutableUser.builder().email("fake@gmail.com").build()
 
         when:

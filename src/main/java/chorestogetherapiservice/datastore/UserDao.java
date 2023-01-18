@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 /** Operation logics on User database. */
@@ -32,7 +33,7 @@ public class UserDao {
   @SuppressWarnings("checkstyle:JavadocParagraph")
   public UserItem get(UserEmail userEmail)
       throws DependencyFailureInternalException {
-    UserItem key =  new UserItemBuilder().email(userEmail.getEmail()).build();
+    Key key =  Key.builder().partitionValue(userEmail.getEmail()).build();
     UserItem userItem;
     try {
       userItem = table.getItem(key);

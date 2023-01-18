@@ -6,11 +6,13 @@ import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
+import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.Instant
 import java.util.function.Consumer
 
 class UserDaoSpec extends Specification {
@@ -28,12 +30,13 @@ class UserDaoSpec extends Specification {
 
     def "test success get user"() {
         given:
-        def userItem = new UserItemBuilder().email(email).build()
+        def randomTime = Instant.ofEpochMilli(1)
+        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).build()
         def userEmail = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmail)
-        def expectedResult = new UserItemBuilder().email(email).build()
+        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).build()
 
         then:
         result == expectedResult

@@ -19,6 +19,7 @@ RUN ["./gradlew", "create-jar", "-i"]
 # one command to run the image
 CMD ["java", "-jar", "build/libs/ChoresTogetherAPIService-1.0-SNAPSHOT.jar"]
 
-# for faster local development, uncomment below CMD and comment above CMD & RUN
+# for faster local development, uncomment below CMD and comment above CMD & RUN before running
+# docker-compose build, docker-compose up
 # CMD ["./gradlew", "run-server", "-i"]
 
