@@ -1,4 +1,4 @@
-# ChoresTogetherAPIService (draft)
+# ChoresTogetherAPIService
 This readme doc is in progress.
 
 This project also serves the purpose of exercising the best practice of developing the backend API service. 
@@ -42,10 +42,9 @@ Now setup is done. Make sure docker containers are running (docker-compose up) a
 
 
 ## Development setup (IntelliJ)
-1. after cloning, open this project at IntelliJ by selecting this project's directory
-2. once opened, right-click anywhere in the project panel, and click "Link to Gradle"
-3. now use gradle to run gradle's tasks at IntelliJ for development. For possible options for Gradle's tasks, please read build.gradle file.
-4. before calling APIs, local dynamoDB setup is required.
+1. After cloning, click "Open" or "File>Open" at IntelliJ, and select build.gradle from this project's directory
+2. Now use Gradle to run Gradle's tasks at IntelliJ for development. For possible options for Gradle's tasks, please read build.gradle file.
+3. To conduct local integration testing of your changes, build & run docker containers (installation step 4 & 5), and then use Postman/terminal to call APIs.
 
 ## APIs
 ### Get user
