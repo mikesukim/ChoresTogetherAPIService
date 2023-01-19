@@ -1,8 +1,11 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
     id 'groovy'
     id 'java'
     id 'application' // requires for running application
     id 'checkstyle'
+    id 'com.bmuschko.docker-remote-api' version '9.1.0'
 }
 
 group 'com.github.mikesukim'
@@ -73,6 +76,12 @@ tasks.register('create-jar') {
 tasks.register('run-server', JavaExec){
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'chorestogetherapiservice.ChoresTogetherAPIService'
+}
+
+tasks.register('run-docker-server', Exec){
+    if (Os.isFamily(Os.FAMILY_MAC)) {
+        commandLine 'sh', './docker-server-run.sh'
+    }
 }
 
 // Checkstyle version needed to be specified to be compatible with Google's checkstyle
