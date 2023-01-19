@@ -90,7 +90,7 @@ class GetUserActivitySpec extends Specification {
     def 'test when NoItemFoundException raised'() {
         given:
         def rawUserEmail = "testUserEmail@gmail.com"
-        def expectedResult = Response.status(400).entity(responseEntityMock).build()
+        def expectedResult = Response.status(404).entity(responseEntityMock).build()
 
         when:
         def result = getUserActivity.getUser(rawUserEmail)

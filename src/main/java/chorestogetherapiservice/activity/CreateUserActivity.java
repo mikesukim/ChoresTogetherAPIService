@@ -1,7 +1,10 @@
 package chorestogetherapiservice.activity;
 
 import chorestogetherapiservice.domain.User;
+import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException;
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
 import chorestogetherapiservice.handler.ResponseHandler;
+import chorestogetherapiservice.logic.CreateUserLogic;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -20,24 +23,32 @@ import javax.ws.rs.core.Response;
 public class CreateUserActivity {
   ResponseHandler responseHandler;
 
+  CreateUserLogic createUserLogic;
+
   @Inject
-  public CreateUserActivity(ResponseHandler responseHandler) {
+  public CreateUserActivity(ResponseHandler responseHandler, CreateUserLogic createUserLogic) {
     this.responseHandler = responseHandler;
+    this.createUserLogic = createUserLogic;
   }
 
   /**
-   * Check if user exists in service.
+   * create user.
    *
    * @param  user Immutable user type. Request's Json body is converted by
    *              JAX-RS's MessageBodyReader(and implemented jersey-media-json-jackson) into
    *              User Immutable type
-   * @return      Response HTTP Response containing the result of user check as Json
    * */
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createUser(@NotNull User user) {
-    //TODO : Implement the logic
-    return responseHandler.generateFailResponseWith("not implemented yet");
+    try {
+      createUserLogic.createUser(user);
+    } catch (DependencyFailureInternalException e) {
+      return responseHandler.generateFailResponseWith(e.getMessage());
+    } catch (ItemAlreadyExistException e) {
+      return responseHandler.generateBadRequestErrorResponseWith(e.getMessage());
+    }
+    return responseHandler.generateSuccessResponse();
   }
 }

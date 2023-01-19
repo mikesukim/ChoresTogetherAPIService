@@ -4,7 +4,11 @@ import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ResponseEntity
 import chorestogetherapiservice.domain.User
 import chorestogetherapiservice.domain.UserEmail
+import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
+import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import chorestogetherapiservice.handler.ResponseHandler
+import chorestogetherapiservice.logic.CreateUserLogic
+import chorestogetherapiservice.logic.GetUserLogic
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
@@ -17,6 +21,8 @@ import javax.ws.rs.core.Response
 
 class CreateUserActivitySpec extends Specification {
 
+    def createUserLogicMock = Mock(CreateUserLogic.class)
+
     def responseHandlerMock = Mock(ResponseHandler.class)
 
     def responseEntityMock = Mock(ResponseEntity.class)
@@ -28,7 +34,7 @@ class CreateUserActivitySpec extends Specification {
     ExecutableValidator validator
 
     @Subject
-    CreateUserActivity createUserActivity = new CreateUserActivity(responseHandlerMock)
+    CreateUserActivity createUserActivity = new CreateUserActivity(responseHandlerMock, createUserLogicMock)
 
     def setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory()
@@ -36,7 +42,7 @@ class CreateUserActivitySpec extends Specification {
     }
 
     @Unroll
-    def 'test getUser validation check fail with null/empty userEmailInput'() {
+    def 'test createUser validation check'() {
 
         when:
         // Hibernate Doc for how to test method validation
@@ -57,6 +63,39 @@ class CreateUserActivitySpec extends Specification {
 
     def 'test createUser success with valid User Input'() {
         given:
+        def expectedResult = Response.status(200).entity(responseEntityMock).build()
+
+        when:
+        def result = createUserActivity.createUser(userMock)
+
+        then:
+        result.status == expectedResult.status
+        result.entity == expectedResult.entity
+
+        1 * createUserLogicMock.createUser(userMock)
+        1 * responseHandlerMock.generateSuccessResponse() >> expectedResult
+        0 * _
+    }
+
+    def 'test when DependencyFailureInternalException raised'() {
+        given:
+        def expectedResult = Response.status(500).entity(responseEntityMock).build()
+
+        when:
+        def result = createUserActivity.createUser(userMock)
+
+        then:
+        result.status == expectedResult.status
+        result.entity == expectedResult.entity
+
+        1 * createUserLogicMock.createUser(userMock) >> {throw new DependencyFailureInternalException(_ as String, new Exception())}
+        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        0 * _
+    }
+
+
+    def 'test when ItemAlreadyExistException raised'() {
+        given:
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:
@@ -66,9 +105,11 @@ class CreateUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        1 * createUserLogicMock.createUser(userMock) >> {throw new ItemAlreadyExistException(_ as String)}
+        1 * responseHandlerMock.generateBadRequestErrorResponseWith(_) >> expectedResult
         0 * _
     }
+
 
 
 }

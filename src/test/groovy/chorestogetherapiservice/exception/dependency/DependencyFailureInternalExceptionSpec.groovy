@@ -1,6 +1,5 @@
 package chorestogetherapiservice.exception.dependency
 
-import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import spock.lang.Specification
 import spock.lang.Subject
 

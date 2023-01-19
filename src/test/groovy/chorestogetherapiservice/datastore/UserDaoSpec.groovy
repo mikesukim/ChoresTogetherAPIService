@@ -1,14 +1,14 @@
 package chorestogetherapiservice.datastore
 
+import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ImmutableUserEmail
-import chorestogetherapiservice.domain.UserEmail
+import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
-import software.amazon.awssdk.enhanced.dynamodb.Key
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
-import software.amazon.awssdk.enhanced.dynamodb.model.GetItemEnhancedRequest
+import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -70,6 +70,46 @@ class UserDaoSpec extends Specification {
         thrown(DependencyFailureInternalException)
 
         1 * tableMock.getItem(_) >> new Exception()
+        0 * _
+    }
+
+    def "test success create user"() {
+        given:
+        def user = ImmutableUser.builder().email(email).build()
+
+        when:
+        userDao.create(user)
+
+        then:
+        1 * tableMock.putItem(_)
+        0 * _
+    }
+
+    def "test createUser when item already exist"() {
+        given:
+        def user = ImmutableUser.builder().email(email).build()
+
+        when:
+        userDao.create(user)
+
+        then:
+        thrown(ItemAlreadyExistException)
+
+        1 * tableMock.putItem(_) >> {throw ConditionalCheckFailedException.builder().build()}
+        0 * _
+    }
+
+    def "test createUser when dynamodb internal failure occurs"() {
+        given:
+        def user = ImmutableUser.builder().email(email).build()
+
+        when:
+        userDao.create(user)
+
+        then:
+        thrown(DependencyFailureInternalException)
+
+        1 * tableMock.putItem(_) >> {throw new Exception()}
         0 * _
     }
 }
