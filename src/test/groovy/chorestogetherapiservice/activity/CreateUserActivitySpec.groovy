@@ -23,8 +23,6 @@ class CreateUserActivitySpec extends Specification {
 
     def createUserLogicMock = Mock(CreateUserLogic.class)
 
-    def responseHandlerMock = Mock(ResponseHandler.class)
-
     def responseEntityMock = Mock(ResponseEntity.class)
 
     @Shared
@@ -34,7 +32,7 @@ class CreateUserActivitySpec extends Specification {
     ExecutableValidator validator
 
     @Subject
-    CreateUserActivity createUserActivity = new CreateUserActivity(responseHandlerMock, createUserLogicMock)
+    CreateUserActivity createUserActivity = new CreateUserActivity(createUserLogicMock)
 
     def setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory()
@@ -72,8 +70,7 @@ class CreateUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock)
-        1 * responseHandlerMock.generateSuccessResponse() >> expectedResult
+        1 * createUserLogicMock.createUser(userMock) >> expectedResult
         0 * _
     }
 
@@ -88,8 +85,7 @@ class CreateUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock) >> {throw new DependencyFailureInternalException(_ as String, new Exception())}
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        1 * createUserLogicMock.createUser(userMock) >> expectedResult
         0 * _
     }
 
@@ -105,8 +101,7 @@ class CreateUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock) >> {throw new ItemAlreadyExistException(_ as String)}
-        1 * responseHandlerMock.generateBadRequestErrorResponseWith(_) >> expectedResult
+        1 * createUserLogicMock.createUser(userMock) >> expectedResult
         0 * _
     }
 

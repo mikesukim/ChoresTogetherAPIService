@@ -1,9 +1,6 @@
 package chorestogetherapiservice.activity;
 
 import chorestogetherapiservice.domain.User;
-import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException;
-import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
-import chorestogetherapiservice.handler.ResponseHandler;
 import chorestogetherapiservice.logic.CreateUserLogic;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -21,13 +18,10 @@ import javax.ws.rs.core.Response;
  */
 @Path("/users")
 public class CreateUserActivity {
-  ResponseHandler responseHandler;
-
   CreateUserLogic createUserLogic;
 
   @Inject
-  public CreateUserActivity(ResponseHandler responseHandler, CreateUserLogic createUserLogic) {
-    this.responseHandler = responseHandler;
+  public CreateUserActivity(CreateUserLogic createUserLogic) {
     this.createUserLogic = createUserLogic;
   }
 
@@ -42,13 +36,6 @@ public class CreateUserActivity {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createUser(@NotNull User user) {
-    try {
-      createUserLogic.createUser(user);
-    } catch (DependencyFailureInternalException e) {
-      return responseHandler.generateFailResponseWith(e.getMessage());
-    } catch (ItemAlreadyExistException e) {
-      return responseHandler.generateBadRequestErrorResponseWith(e.getMessage());
-    }
-    return responseHandler.generateSuccessResponse();
+    return createUserLogic.createUser(user);
   }
 }
