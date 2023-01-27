@@ -2,7 +2,6 @@ package chorestogetherapiservice.handler;
 
 import chorestogetherapiservice.domain.ImmutableResponseEntity;
 import chorestogetherapiservice.domain.ResponseEntity;
-import java.util.Map;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -33,7 +32,7 @@ public class ResponseHandler {
   }
 
   /** generate success Response with data. */
-  public Response generateSuccessResponseWith(Map<String, String> data) {
+  public Response generateSuccessResponseWith(Object data) {
     return generateJsonTypeResponseWith(HTTP_OK_STATUS_CODE, ImmutableResponseEntity
         .builder()
         .status(SUCCESS_STATUS)

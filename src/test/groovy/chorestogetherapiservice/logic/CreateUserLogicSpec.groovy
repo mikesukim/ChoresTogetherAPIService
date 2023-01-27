@@ -1,6 +1,7 @@
 package chorestogetherapiservice.logic
 
 import chorestogetherapiservice.datastore.UserDao
+import chorestogetherapiservice.domain.ImmutableToken
 import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ResponseEntity
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
@@ -28,9 +29,8 @@ class CreateUserLogicSpec extends Specification {
     def "test success createUser"() {
         given:
         def user = ImmutableUser.builder().email("fake@gmail.com").build()
-        def tokenMock = "tokenMock"
-        def dataMock = new HashMap<String, String>()
-        dataMock.put("token", tokenMock)
+        def rawTokenMock = "tokenMock"
+        def tokenMock = ImmutableToken.builder().token(rawTokenMock).build()
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
 
         when:
@@ -41,8 +41,8 @@ class CreateUserLogicSpec extends Specification {
         result.entity == expectedResult.entity
 
         1 * userDaoMock.create(user)
-        1 * jwtHandlerMock.generateJwt(user) >> tokenMock
-        1 * responseHandlerMock.generateSuccessResponseWith(dataMock) >> expectedResult
+        1 * jwtHandlerMock.generateJwt(user) >> rawTokenMock
+        1 * responseHandlerMock.generateSuccessResponseWith(tokenMock) >> expectedResult
         0 * _
     }
 

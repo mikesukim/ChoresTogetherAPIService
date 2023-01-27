@@ -2,7 +2,6 @@ package chorestogetherapiservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.Map;
 import javax.annotation.Nullable;
 import org.immutables.value.Value;
 
@@ -24,5 +23,5 @@ public interface ResponseEntity {
 
   // when status is error & fail, data should be null
   @Nullable
-  Map<String, String> getData();
+  Object getData();
 }
