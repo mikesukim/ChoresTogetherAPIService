@@ -1,5 +1,6 @@
 package chorestogetherapiservice.domain;
 
+import chorestogetherapiservice.datastore.UserItem;
 import chorestogetherapiservice.util.StringPatternCheckUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -27,5 +28,16 @@ public interface User {
     Preconditions.checkState(
         StringPatternCheckUtil.checkEmailPattern(getEmail()),
         "email format is not correct");
+  }
+
+
+  /**
+   * Expressive factory methods fpr conversion of UserItem type to User.
+   * <a href="https://immutables.github.io/immutable.html#expressive-factory-methods">doc</a>
+   * */
+  static User of(UserItem userItem) {
+    return ImmutableUser.builder()
+        .email(userItem.getEmail())
+        .build();
   }
 }

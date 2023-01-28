@@ -3,8 +3,8 @@ package chorestogetherapiservice.activity;
 import chorestogetherapiservice.domain.ImmutableUserEmail;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
-import chorestogetherapiservice.handler.ResponseHandler;
 import chorestogetherapiservice.logic.GetUserLogic;
+import java.util.regex.PatternSyntaxException;
 import javax.inject.Inject;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -39,12 +39,9 @@ public class GetUserActivity {
 
   GetUserLogic getUserLogic;
 
-  ResponseHandler responseHandler;
-
   @Inject
-  public GetUserActivity(GetUserLogic getUserLogic, ResponseHandler responseHandler) {
+  public GetUserActivity(GetUserLogic getUserLogic) {
     this.getUserLogic = getUserLogic;
-    this.responseHandler = responseHandler;
   }
 
   /**
@@ -57,19 +54,11 @@ public class GetUserActivity {
   @Path("/{userEmailInput}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput)
-      throws DependencyFailureInternalException {
-    try {
-      //TODO: decouple converting userEmailInput to UserEmail
-      ImmutableUserEmail immutableUserEmail =
-          ImmutableUserEmail.builder()
-              .email(userEmailInput)
-              .build();
-      getUserLogic.getUser(immutableUserEmail);
-    } catch (DependencyFailureInternalException e) {
-      return responseHandler.generateFailResponseWith(e.getMessage());
-    } catch (NoItemFoundException e) {
-      return responseHandler.generateResourceNotFoundErrorResponseWith(e.getMessage());
-    }
-    return responseHandler.generateSuccessResponse();
+      throws PatternSyntaxException, DependencyFailureInternalException, NoItemFoundException {
+    ImmutableUserEmail immutableUserEmail =
+        ImmutableUserEmail.builder()
+            .email(userEmailInput)
+            .build();
+    return getUserLogic.getUser(immutableUserEmail);
   }
 }

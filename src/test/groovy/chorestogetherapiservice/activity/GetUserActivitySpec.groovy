@@ -20,15 +20,13 @@ class GetUserActivitySpec extends Specification {
 
     def getUserLogicMock = Mock(GetUserLogic.class)
 
-    def responseHandlerMock = Mock(ResponseHandler.class)
-
     def responseEntityMock = Mock(ResponseEntity.class)
 
     //TODO: import Spock.guice to inject Hibernate from Guice and remove validator initialization at setup()
     ExecutableValidator validator
 
     @Subject
-    GetUserActivity getUserActivity = new GetUserActivity(getUserLogicMock, responseHandlerMock)
+    GetUserActivity getUserActivity = new GetUserActivity(getUserLogicMock)
 
     def setup() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory()
@@ -53,6 +51,17 @@ class GetUserActivitySpec extends Specification {
         userEmailInput << [null, ""]
     }
 
+    def 'test when rawUserEmail has wrong email pattern'() {
+        given:
+        def rawUserEmail = "wrongFormatEmail"
+
+        when:
+        getUserActivity.getUser(rawUserEmail)
+
+        then:
+        thrown(RuntimeException)
+    }
+
     def 'test getUser success with valid userEmailInput'() {
         given:
         def rawUserEmail = "testUserEmail@email.com"
@@ -65,8 +74,7 @@ class GetUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * getUserLogicMock.getUser(_ as UserEmail) >> ImmutableUser.builder().email("fake@gmail.com").build()
-        1 * responseHandlerMock.generateSuccessResponse() >> expectedResult
+        1 * getUserLogicMock.getUser(_ as UserEmail) >> expectedResult
         0 * _
     }
 
@@ -82,8 +90,7 @@ class GetUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new DependencyFailureInternalException("", new Exception())}
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        1 * getUserLogicMock.getUser( _ as UserEmail) >> expectedResult
         0 * _
     }
 
@@ -99,8 +106,7 @@ class GetUserActivitySpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * getUserLogicMock.getUser( _ as UserEmail) >> {throw new NoItemFoundException("")}
-        1 * responseHandlerMock.generateResourceNotFoundErrorResponseWith(_) >> expectedResult
+        1 * getUserLogicMock.getUser( _ as UserEmail) >> expectedResult
         0 * _
     }
 
