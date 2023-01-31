@@ -13,8 +13,6 @@ import javax.ws.rs.core.Response;
 
 /**
  * CreateUser API entry class.
- * For explanation about Jersey's annotations & resource life cycle,
- * read GetUserActivity's javadoc.
  */
 @Path("/users")
 public class CreateUserActivity {
@@ -31,6 +29,7 @@ public class CreateUserActivity {
    * @param  user Immutable user type. Request's Json body is converted by
    *              JAX-RS's MessageBodyReader(and implemented jersey-media-json-jackson) into
    *              User Immutable type
+   * @return      HTTP Response containing the result of user check as Json
    * */
   @POST
   @Consumes(MediaType.APPLICATION_JSON)

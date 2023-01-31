@@ -18,21 +18,24 @@ import javax.ws.rs.core.Response;
 /**
  * GetUser API entry class.
  *
- * <br>
- * '@Path' is Jersey's annotation to indicate this class is jersey class resource.
- * Jersey class resource uses HK2 as a default HK2 as DI.
- * To use Guice as default DI, HK2-Guice-Bridge is required :
- * <a href="https://javaee.github.io/hk2/guice-bridge.html">HK2-Guice-Bridge link</a>
- * 'io.logz:guice-jersey' dependency configures the HK2-Guice-Bridge for enabling Guice.
- * When @Inject is used, Bridge will first look for instance from HK injector,
- * if instance not found, then Guice injector will be checked.
+ * <p>
+ *   Following paragraphs are to explain basic of Jersey's/jax-rs annotations.
+ *   '@Path' is Jersey's annotation to indicate this class is jersey class resource.
+ *   Jersey class resource uses HK2 as a default HK2 as DI.
+ *   To use Guice as default DI, HK2-Guice-Bridge is required :
+ *   <a href="https://javaee.github.io/hk2/guice-bridge.html">HK2-Guice-Bridge link</a>
+ *   'io.logz:guice-jersey' dependency configures the HK2-Guice-Bridge for enabling Guice.
+ *   When @Inject is used, Bridge will first look for instance from HK injector,
+ *   if instance not found, then Guice injector will be checked.
+ * </p>
  *
- * <br>
- * '@RequestedScope' is a default life cycle for the jersey class resource (or JAR-RX).
- * <a href="https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/jaxrs-resources.html#d0e2692">
+ * <p>
+ *   '@RequestedScope' is a default life cycle for the jersey class resource (or JAR-RX).
+ *   <a href="https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/jaxrs-resources.html#d0e2692">
  *   (jersey's life cycle description) </a>
- * Instead of '@Singleton', default life cycle is used following
- * <a href="https://stackoverflow.com/questions/30409895/jax-rs-resource-lifecycle-performance-impact">this discussion</a>.
+ *   Instead of '@Singleton', default life cycle is used following
+ *   <a href="https://stackoverflow.com/questions/30409895/jax-rs-resource-lifecycle-performance-impact">this discussion</a>.
+ * </p>
  */
 @Path("/users")
 public class GetUserActivity {
@@ -48,7 +51,7 @@ public class GetUserActivity {
    * Check if user exists in service.
    *
    * @param  userEmailInput user's email as String.
-   * @return                Response HTTP Response containing the result of user check as Json
+   * @return                HTTP Response containing the result of user check as Json
    * */
   @GET
   @Path("/{userEmailInput}")
