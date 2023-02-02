@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
+ * THIS API SHOULD BE ONLY CALLED FOR DEVELOPMENT PURPOSE.
  * CreateUser API entry class.
  */
 @Path("/users")
