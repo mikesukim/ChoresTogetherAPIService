@@ -2,7 +2,9 @@ package chorestogetherapiservice.activity
 
 import chorestogetherapiservice.domain.ImmutableSocialIdToken
 import chorestogetherapiservice.domain.SocialIdToken
+import chorestogetherapiservice.domain.SocialLoginServiceType
 import chorestogetherapiservice.handler.ResponseHandler
+import chorestogetherapiservice.logic.LoginUserLogic
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
@@ -15,13 +17,13 @@ import javax.ws.rs.core.Response
 
 class LoginUserActivitySpec extends Specification {
 
-    def responseHandlerMock = Mock(ResponseHandler.class)
+    def loginUserLogicMock = Mock(LoginUserLogic.class)
 
     //TODO: import Spock.guice to inject Hibernate from Guice and remove validator initialization at setup()
     ExecutableValidator validator
 
     @Subject
-    def loginUserActivity = new LoginUserActivity(responseHandlerMock)
+    def loginUserActivity = new LoginUserActivity(loginUserLogicMock)
 
     @Shared
     def socialIdTokenMock =  ImmutableSocialIdToken.builder().token("rawToken").build()
@@ -61,7 +63,9 @@ class LoginUserActivitySpec extends Specification {
         then:
         result == expectedResult
 
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        1 * loginUserLogicMock.loginUser(
+                SocialLoginServiceType.GOOGLE,
+                socialIdTokenMock) >> expectedResult
         0 * _
     }
 
@@ -75,7 +79,9 @@ class LoginUserActivitySpec extends Specification {
         then:
         result == expectedResult
 
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
+        1 * loginUserLogicMock.loginUser(
+                SocialLoginServiceType.KAKAO,
+                socialIdTokenMock) >> expectedResult
         0 * _
     }
 }

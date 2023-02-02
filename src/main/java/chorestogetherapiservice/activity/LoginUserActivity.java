@@ -2,7 +2,7 @@ package chorestogetherapiservice.activity;
 
 import chorestogetherapiservice.domain.SocialIdToken;
 import chorestogetherapiservice.domain.SocialLoginServiceType;
-import chorestogetherapiservice.handler.ResponseHandler;
+import chorestogetherapiservice.logic.LoginUserLogic;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -28,11 +28,11 @@ import javax.ws.rs.core.Response;
 @Path("/login")
 public class LoginUserActivity {
 
-  final private ResponseHandler responseHandler;
+  LoginUserLogic loginUserLogic;
 
   @Inject
-  public LoginUserActivity(ResponseHandler responseHandler) {
-    this.responseHandler = responseHandler;
+  public LoginUserActivity(LoginUserLogic loginUserLogic) {
+    this.loginUserLogic = loginUserLogic;
   }
 
   /**
@@ -46,9 +46,9 @@ public class LoginUserActivity {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response googleLogin(@NotNull SocialIdToken socialIdToken) {
-    SocialLoginServiceType socialLoginServiceType = SocialLoginServiceType.GOOGLE;
-    return responseHandler.generateFailResponseWith(
-        socialLoginServiceType + " login is not implemented yet");
+    return loginUserLogic.loginUser(
+        SocialLoginServiceType.GOOGLE,
+        socialIdToken);
   }
 
 
@@ -63,9 +63,8 @@ public class LoginUserActivity {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response kakaoTalkLogin(@NotNull SocialIdToken socialIdToken) {
-    SocialLoginServiceType socialLoginServiceType = SocialLoginServiceType.KAKAO;
-    return responseHandler.generateFailResponseWith(
-        socialLoginServiceType + " login is not implemented yet");
+    return loginUserLogic.loginUser(
+        SocialLoginServiceType.KAKAO,
+        socialIdToken);
   }
-
 }
