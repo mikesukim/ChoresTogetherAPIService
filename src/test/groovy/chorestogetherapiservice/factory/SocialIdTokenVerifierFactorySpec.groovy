@@ -31,4 +31,12 @@ class SocialIdTokenVerifierFactorySpec extends Specification {
         SocialLoginServiceType.GOOGLE       |   googleIdTokenVerifierMock
         SocialLoginServiceType.KAKAO        |   kakaoIdTokenVerifierMock
     }
+
+    def "test getSocialIdTokenVerifier error"() {
+        when:
+        socialIdTokenVerifierFactory.getSocialIdTokenVerifier(SocialLoginServiceType.NOT_IMPLEMENTED_SOCIAL_SERVICE)
+
+        then:
+        thrown(RuntimeException)
+    }
 }
