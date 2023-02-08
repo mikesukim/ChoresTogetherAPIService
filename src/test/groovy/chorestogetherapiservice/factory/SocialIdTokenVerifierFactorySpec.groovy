@@ -1,7 +1,7 @@
 package chorestogetherapiservice.factory
 
 import chorestogetherapiservice.domain.SocialLoginServiceType
-import chorestogetherapiservice.verifier.GoogleIdTokenVerifier
+import chorestogetherapiservice.verifier.GoogleSocialIdTokenVerifier
 import chorestogetherapiservice.verifier.KakaoIdTokenVerifier
 import spock.lang.Shared
 import spock.lang.Specification
@@ -10,7 +10,7 @@ import spock.lang.Subject
 class SocialIdTokenVerifierFactorySpec extends Specification {
 
     @Shared
-    def googleIdTokenVerifierMock = Mock(GoogleIdTokenVerifier.class)
+    def googleIdTokenVerifierMock = Mock(GoogleSocialIdTokenVerifier.class)
     @Shared
     def kakaoIdTokenVerifierMock = Mock(KakaoIdTokenVerifier.class)
 

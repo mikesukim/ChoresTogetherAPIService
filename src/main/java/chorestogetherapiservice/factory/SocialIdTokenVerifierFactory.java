@@ -1,7 +1,7 @@
 package chorestogetherapiservice.factory;
 
 import chorestogetherapiservice.domain.SocialLoginServiceType;
-import chorestogetherapiservice.verifier.GoogleIdTokenVerifier;
+import chorestogetherapiservice.verifier.GoogleSocialIdTokenVerifier;
 import chorestogetherapiservice.verifier.KakaoIdTokenVerifier;
 import chorestogetherapiservice.verifier.SocialIdTokenVerifier;
 import javax.inject.Inject;
@@ -11,13 +11,13 @@ import javax.inject.Singleton;
 @Singleton
 public class SocialIdTokenVerifierFactory {
 
-  GoogleIdTokenVerifier googleIdTokenVerifier;
+  GoogleSocialIdTokenVerifier googleSocialIdTokenVerifier;
   KakaoIdTokenVerifier kakaoIdTokenVerifier;
 
   @Inject
-  public SocialIdTokenVerifierFactory(GoogleIdTokenVerifier googleIdTokenVerifier,
+  public SocialIdTokenVerifierFactory(GoogleSocialIdTokenVerifier googleSocialIdTokenVerifier,
                                       KakaoIdTokenVerifier kakaoIdTokenVerifier) {
-    this.googleIdTokenVerifier = googleIdTokenVerifier;
+    this.googleSocialIdTokenVerifier = googleSocialIdTokenVerifier;
     this.kakaoIdTokenVerifier = kakaoIdTokenVerifier;
   }
 
@@ -26,7 +26,7 @@ public class SocialIdTokenVerifierFactory {
       SocialLoginServiceType socialLoginServiceType) {
     switch (socialLoginServiceType) {
       case GOOGLE:
-        return googleIdTokenVerifier;
+        return googleSocialIdTokenVerifier;
       case KAKAO:
         return kakaoIdTokenVerifier;
       default:
