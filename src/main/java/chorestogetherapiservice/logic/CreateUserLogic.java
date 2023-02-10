@@ -32,15 +32,15 @@ public class CreateUserLogic {
    */
   public Response createUser(User user) throws
       DependencyFailureInternalException, ItemAlreadyExistException {
+    String rawToken = jwtHandler.generateJwt(user);
+    Token token = ImmutableToken.builder().token(rawToken).build();
     try {
-      userDao.create(user);
+      userDao.create(user, token);
     } catch (DependencyFailureInternalException e) {
       return responseHandler.generateFailResponseWith(e.getMessage());
     } catch (ItemAlreadyExistException e) {
       return responseHandler.generateBadRequestErrorResponseWith(e.getMessage());
     }
-    String rawToken = jwtHandler.generateJwt(user);
-    Token token = ImmutableToken.builder().token(rawToken).build();
     return responseHandler.generateSuccessResponseWith(token);
   }
 }

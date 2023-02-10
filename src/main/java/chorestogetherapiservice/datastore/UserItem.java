@@ -1,5 +1,6 @@
 package chorestogetherapiservice.datastore;
 
+import chorestogetherapiservice.domain.Token;
 import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.immutablesstyles.DynamoDbImmutableStyle;
 import java.time.Instant;
@@ -22,14 +23,17 @@ public interface UserItem {
 
   Instant getRegistrationDate();
 
+  String getToken();
+
   /**
    * Expressive factory methods fpr conversion of User type to UserItem.
    * <a href="https://immutables.github.io/immutable.html#expressive-factory-methods">doc</a>
    * */
-  static UserItem of(User user) {
+  static UserItem of(User user, Token token) {
     return new UserItemBuilder()
         .email(user.getEmail())
         .registrationDate(Instant.now())
+        .token(token.getToken())
         .build();
   }
 }

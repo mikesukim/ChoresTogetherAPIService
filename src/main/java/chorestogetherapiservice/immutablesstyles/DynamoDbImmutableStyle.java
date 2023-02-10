@@ -17,7 +17,7 @@ import org.immutables.value.Value;
     strictBuilder = true,
     builderVisibility = Value.Style.BuilderVisibility.PUBLIC,
     // Setting visibility as PRIVATE creates Builder class to be not inner-class of \
-    // Immutable implementation class. With the default visibility, Builder class created as \
+    // Immutable implementation class. With the default visibility, Builder class is created as \
     // inner static class of the Immutable implementation class, \
     // and referring inner static class at @DynamoDbImmutable \
     // (e.x. @DynamoDbImmutable(builder = ImmutableUserItem.Builder.class))

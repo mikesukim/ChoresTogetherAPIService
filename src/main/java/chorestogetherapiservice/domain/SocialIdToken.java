@@ -14,6 +14,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableSocialIdToken.class)
 public interface SocialIdToken {
+  //TODO: change token name to IdToken
   String getToken();
 
 }

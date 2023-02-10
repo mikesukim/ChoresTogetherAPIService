@@ -1,8 +1,17 @@
 package chorestogetherapiservice.logic;
 
 import chorestogetherapiservice.datastore.UserDao;
+import chorestogetherapiservice.datastore.UserItem;
+import chorestogetherapiservice.domain.ImmutableToken;
+import chorestogetherapiservice.domain.ImmutableUser;
+import chorestogetherapiservice.domain.ImmutableUserEmail;
 import chorestogetherapiservice.domain.SocialIdToken;
 import chorestogetherapiservice.domain.SocialLoginServiceType;
+import chorestogetherapiservice.domain.Token;
+import chorestogetherapiservice.domain.User;
+import chorestogetherapiservice.domain.UserEmail;
+import chorestogetherapiservice.exception.datastore.NoItemFoundException;
+import chorestogetherapiservice.exception.sociallogin.SocialIdTokenValidationExecption;
 import chorestogetherapiservice.factory.SocialIdTokenVerifierFactory;
 import chorestogetherapiservice.handler.JwtHandler;
 import chorestogetherapiservice.handler.ResponseHandler;
@@ -36,20 +45,44 @@ public class LoginUserLogic {
   }
 
   /**
-   * TODO: fix javadoc.
-   * Skeleton LoginUser */
+   * This logic is to login user with ID-Token which provided by social service.
+   * (currently Google is only supported.)
+   *
+   * @param  socialLoginServiceType social service which generated ID-TOKEN.
+   * @param  socialIdToken          user's Social ID-TOKEN
+   * @return  Response which contains our service's token as entity. */
   public Response loginUser(SocialLoginServiceType socialLoginServiceType,
                             SocialIdToken socialIdToken) {
 
+    // Verify ID-Token and retrieve userEmail from it
     SocialIdTokenVerifier socialIdTokenVerifier =
         socialIdTokenVerifierFactory.getSocialIdTokenVerifier(socialLoginServiceType);
-
     Optional<String> rawUserEmail = socialIdTokenVerifier.verify(socialIdToken);
+    if (rawUserEmail.isEmpty()) {
+      throw new SocialIdTokenValidationExecption("ID Token does not contain userEmail");
+    }
 
-    //TODO : add logic of checking if user exist at database.
-    // if not exist, register user, generate new token and return a new token.
-    // if exist, then get token from database and return that token.
+    // Check if user already exists
+    UserEmail userEmail = ImmutableUserEmail.builder().email(rawUserEmail.get()).build();
+    Optional<UserItem> userItem;
+    try {
+      userItem = Optional.of(userDao.get(userEmail));
+    } catch (NoItemFoundException e) {
+      userItem = Optional.empty();
+    }
 
-    return responseHandler.generateFailResponseWith("not implemented yet");
+    // If exist, return user's token
+    if (userItem.isPresent()) {
+      String rawToken = userItem.get().getToken();
+      Token token = ImmutableToken.builder().token(rawToken).build();
+      return responseHandler.generateSuccessResponseWith(token);
+    }
+
+    // If not exist, register user
+    User user = ImmutableUser.builder().email(rawUserEmail.get()).build();
+    String rawToken = jwtHandler.generateJwt(user);
+    Token token = ImmutableToken.builder().token(rawToken).build();
+    userDao.create(user, token);
+    return responseHandler.generateSuccessResponseWith(token);
   }
 }

@@ -1,5 +1,6 @@
 package chorestogetherapiservice.datastore;
 
+import chorestogetherapiservice.domain.Token;
 import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.domain.UserEmail;
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException;
@@ -33,7 +34,7 @@ public class UserDao {
    * get user from User Table.
    *
    * @param  userEmail user's email to search.
-   * @return                    If no result is found, Optional.Empty is returned.
+   * @return                    If no result is found, NoItemFoundException occurs.
    *                            If found, Optional.of(User) is returned. */
   @SuppressWarnings("checkstyle:JavadocParagraph")
   public UserItem get(UserEmail userEmail)
@@ -58,11 +59,11 @@ public class UserDao {
    *
    * @param  user   new user to add
    */
-  public void create(User user) {
+  public void create(User user, Token token) {
     try {
       PutItemEnhancedRequest<UserItem> request
           = PutItemEnhancedRequest.builder(UserItem.class)
-          .item(UserItem.of(user))
+          .item(UserItem.of(user, token))
           .conditionExpression(
               Expression.builder()
                   .expression("attribute_not_exists(email)")

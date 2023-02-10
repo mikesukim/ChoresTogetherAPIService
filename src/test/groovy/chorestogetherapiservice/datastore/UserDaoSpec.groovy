@@ -1,5 +1,6 @@
 package chorestogetherapiservice.datastore
 
+import chorestogetherapiservice.domain.ImmutableToken
 import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
@@ -19,6 +20,8 @@ class UserDaoSpec extends Specification {
 
     def email = "mikesungunkim@gmail.com"
 
+    def rawToken = "token"
+
     def tableMock = Mock(DynamoDbTable<UserItemSpec>.class)
 
     def dynamoDbClientMock = Mock(DynamoDbEnhancedClient.class) {
@@ -31,12 +34,12 @@ class UserDaoSpec extends Specification {
     def "test success get user"() {
         given:
         def randomTime = Instant.ofEpochMilli(1)
-        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).build()
+        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).build()
         def userEmail = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmail)
-        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).build()
+        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).build()
 
         then:
         result == expectedResult
@@ -76,9 +79,10 @@ class UserDaoSpec extends Specification {
     def "test success create user"() {
         given:
         def user = ImmutableUser.builder().email(email).build()
+        def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
-        userDao.create(user)
+        userDao.create(user, token)
 
         then:
         1 * tableMock.putItem(_)
@@ -88,9 +92,10 @@ class UserDaoSpec extends Specification {
     def "test createUser when item already exist"() {
         given:
         def user = ImmutableUser.builder().email(email).build()
+        def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
-        userDao.create(user)
+        userDao.create(user, token)
 
         then:
         thrown(ItemAlreadyExistException)
@@ -102,9 +107,10 @@ class UserDaoSpec extends Specification {
     def "test createUser when dynamodb internal failure occurs"() {
         given:
         def user = ImmutableUser.builder().email(email).build()
+        def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
-        userDao.create(user)
+        userDao.create(user, token)
 
         then:
         thrown(DependencyFailureInternalException)

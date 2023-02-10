@@ -4,6 +4,7 @@ import chorestogetherapiservice.datastore.UserDao
 import chorestogetherapiservice.domain.ImmutableToken
 import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ResponseEntity
+import chorestogetherapiservice.domain.Token
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import chorestogetherapiservice.handler.JwtHandler
@@ -40,8 +41,8 @@ class CreateUserLogicSpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * userDaoMock.create(user)
         1 * jwtHandlerMock.generateJwt(user) >> rawTokenMock
+        1 * userDaoMock.create(user,{it.getToken() == rawTokenMock} as Token)
         1 * responseHandlerMock.generateSuccessResponseWith(tokenMock) >> expectedResult
         0 * _
     }
@@ -49,6 +50,7 @@ class CreateUserLogicSpec extends Specification {
     def "test when ItemAlreadyExistException raise"() {
         given:
         def user = ImmutableUser.builder().email("fake@gmail.com").build()
+        def rawTokenMock = "tokenMock"
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:
@@ -58,7 +60,8 @@ class CreateUserLogicSpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * userDaoMock.create(user) >> {throw new ItemAlreadyExistException(_ as String)}
+        1 * jwtHandlerMock.generateJwt(user) >> rawTokenMock
+        1 * userDaoMock.create(user,{it.getToken() == rawTokenMock} as Token) >> {throw new ItemAlreadyExistException(_ as String)}
         1 * responseHandlerMock.generateBadRequestErrorResponseWith(_) >> expectedResult
         0 * _
     }
@@ -66,6 +69,7 @@ class CreateUserLogicSpec extends Specification {
     def "test when dependencyException raise"() {
         given:
         def user = ImmutableUser.builder().email("fake@gmail.com").build()
+        def rawTokenMock = "tokenMock"
         def message = "error message"
         def cause = new Exception()
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
@@ -77,7 +81,8 @@ class CreateUserLogicSpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * userDaoMock.create(user) >> {throw new DependencyFailureInternalException(message,cause)}
+        1 * jwtHandlerMock.generateJwt(user) >> rawTokenMock
+        1 * userDaoMock.create(user,{it.getToken() == rawTokenMock} as Token) >> {throw new DependencyFailureInternalException(message,cause)}
         1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
         0 * _
     }
