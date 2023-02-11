@@ -37,7 +37,7 @@ class RuntimeExceptionMapperSpec extends Specification {
         response.getMediaType() == response.getMediaType()
         response.getStatus() == response.getStatus()
 
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResponse
+        1 * responseHandlerMock.generateUnsuccessfulResponseWith( _, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()) >> expectedResponse
         0 * _
     }
 
@@ -58,7 +58,7 @@ class RuntimeExceptionMapperSpec extends Specification {
         response.getMediaType() == response.getMediaType()
         response.getStatus() == response.getStatus()
 
-        1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResponse
+        1 * responseHandlerMock.generateUnsuccessfulResponseWith(_, Response.Status.BAD_REQUEST.getStatusCode()) >> expectedResponse
         0 * _
     }
 }

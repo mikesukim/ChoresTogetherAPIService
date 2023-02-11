@@ -130,4 +130,30 @@ class ResponseHandlerSpec extends Specification {
         entityResult.getMessage() == expectedEntity.getMessage()
         entityResult.getData() == expectedEntity.getData()
     }
+
+    def "test success of generating unsuccessful(error&failure) response"() {
+        when:
+        def expectedResponseEntity = ImmutableResponseEntity.builder().status(expectedEntityStatusMessage).message(messageMock).build()
+        def expectedResult = Response
+                .status(expectedStatusCode)
+                .entity(expectedResponseEntity)
+                .type(MediaType.APPLICATION_JSON)
+                .build()
+        def result = responseHandler.generateUnsuccessfulResponseWith(messageMock, statusCode)
+
+        then:
+        expectedResult.status == result.status
+        expectedResult.mediaType == result.mediaType
+        def entityResult = result.entity as ResponseEntity
+        def expectedEntity = expectedResult.entity as ResponseEntity
+        entityResult.getStatus() == expectedEntity.getStatus()
+        entityResult.getMessage() == expectedEntity.getMessage()
+        entityResult.getData() == expectedEntity.getData()
+
+        where:
+        statusCode | expectedStatusCode | expectedEntityStatusMessage
+        400        | 400                | "error"
+        404        | 404                | "error"
+        500        | 500                | "fail"
+    }
 }

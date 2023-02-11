@@ -38,6 +38,7 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
       WebApplicationException webApplicationException = (WebApplicationException) exception;
       status = webApplicationException.getResponse().getStatus();
     }
-    return responseHandler.generateFailResponseWith(exception.getMessage());
+
+    return responseHandler.generateUnsuccessfulResponseWith(exception.getMessage(), status);
   }
 }

@@ -67,6 +67,22 @@ public class ResponseHandler {
         .build());
   }
 
+  /** generate unsuccessful (error&failure) Response. */
+  public Response generateUnsuccessfulResponseWith(String message, int statusCode) {
+
+    String entityStatusMessage = FAIL_STATUS;
+    if (Response.Status.Family.familyOf(statusCode)
+        == Response.Status.Family.CLIENT_ERROR) {
+      entityStatusMessage = ERROR_STATUS;
+    }
+
+    return generateJsonTypeResponseWith(statusCode, ImmutableResponseEntity
+        .builder()
+        .status(entityStatusMessage)
+        .message(message)
+        .build());
+  }
+
   private Response generateJsonTypeResponseWith(int status, ResponseEntity responseEntity) {
     return Response
         .status(status)
