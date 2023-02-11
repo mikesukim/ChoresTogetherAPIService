@@ -25,6 +25,8 @@ public interface UserItem {
 
   String getToken();
 
+  // TODO : add unique ID using https://github.com/aventrix/jnanoid, and set as primary key
+
   /**
    * Expressive factory methods fpr conversion of User type to UserItem.
    * <a href="https://immutables.github.io/immutable.html#expressive-factory-methods">doc</a>
