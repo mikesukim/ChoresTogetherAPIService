@@ -15,11 +15,11 @@ ENV AWS_SECRET_ACCESS_KEY=fakeSecretAccessKey
 # container listening port (not publishing port)
 EXPOSE 8080
 # commands to build image on top of openjdk:11 image
-RUN ["./gradlew", "create-jar", "-i"]
+RUN ["./gradlew", "run-production-build", "-i"]
 # one command to run the image
 CMD ["java", "-jar", "build/libs/ChoresTogetherAPIService-1.0-SNAPSHOT.jar"]
 
-# for faster local development, uncomment below CMD and comment above CMD & RUN before running
+# for faster local development (for skipping unit testing & checkstyle), uncomment below RUN and comment above RUN before running
 # docker-compose build, docker-compose up
-# CMD ["./gradlew", "run-server", "-i"]
+# RUN ["./gradlew", "run-development-build", "-i"]
 

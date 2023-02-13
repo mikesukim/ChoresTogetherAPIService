@@ -74,16 +74,22 @@ test {
     useJUnitPlatform()
 }
 
-tasks.register('create-jar') {
+tasks.register('run-production-build') {
     dependsOn tasks.clean
-    dependsOn tasks.build
-    dependsOn tasks.check
-    dependsOn tasks.test
-    dependsOn tasks.jar
+    dependsOn tasks.build // this command includes compileJava, jar, test, checkStyle
 
     // When multiple dependsOn, its order is only guaranteed with mustRunAfter
     tasks.findByName('build').mustRunAfter 'clean'
-    tasks.findByName('jar').mustRunAfter 'test'
+}
+
+tasks.register('run-development-build') {
+    dependsOn tasks.clean
+    dependsOn tasks.compileJava
+    dependsOn tasks.jar
+
+    // When multiple dependsOn, its order is only guaranteed with mustRunAfter
+    tasks.findByName('compileJava').mustRunAfter 'clean'
+    tasks.findByName('jar').mustRunAfter 'compileJava'
 }
 
 tasks.register('run-server', JavaExec){
