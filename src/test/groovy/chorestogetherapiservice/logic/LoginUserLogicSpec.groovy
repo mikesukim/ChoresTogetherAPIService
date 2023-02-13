@@ -49,9 +49,10 @@ class LoginUserLogicSpec extends Specification {
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
         def rawEmail = "rawEmail@gmail.com"
         def rawToken = "token"
+        def uid = "123"
         def optionalUserEmail = Optional.of(rawEmail)
         def randomTime = Instant.ofEpochMilli(1)
-        def userItem = new UserItemBuilder().email(rawEmail).registrationDate(randomTime).token(rawToken).build()
+        def userItem = new UserItemBuilder().email(rawEmail).registrationDate(randomTime).token(rawToken).uid(uid).build()
 
         when:
         def result = loginUserLogic.loginUser(SocialLoginServiceType.GOOGLE, socialIdTokenMock)

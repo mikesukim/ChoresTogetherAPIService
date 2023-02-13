@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -22,12 +23,18 @@ import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedExce
 @Singleton
 public class UserDao {
   private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
-  private static final String TABLE_NAME = "User";
+  private static final String BASE_TABLE_NAME = "user";
+  private static final String GSI_NAME = "user_by_uid";
   private final DynamoDbTable<UserItem> table;
 
+  private final DynamoDbIndex<UserItem> gsi;
+
+  @SuppressWarnings("checkstyle:MissingJavadocMethod")
   @Inject
   public UserDao(DynamoDbEnhancedClient dynamoDbClient) {
-    this.table = dynamoDbClient.table(TABLE_NAME, TableSchema.fromImmutableClass(UserItem.class));
+    this.table = dynamoDbClient.table(BASE_TABLE_NAME,
+        TableSchema.fromImmutableClass(UserItem.class));
+    this.gsi = table.index(GSI_NAME);
   }
 
   /**
@@ -36,7 +43,6 @@ public class UserDao {
    * @param  userEmail user's email to search.
    * @return                    If no result is found, NoItemFoundException occurs.
    *                            If found, Optional.of(User) is returned. */
-  @SuppressWarnings("checkstyle:JavadocParagraph")
   public UserItem get(UserEmail userEmail)
       throws DependencyFailureInternalException {
     Key key =  Key.builder().partitionValue(userEmail.getEmail()).build();

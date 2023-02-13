@@ -59,6 +59,8 @@ dependencies {
     // Google API client
     implementation 'com.google.api-client:google-api-client:2.1.2'
 
+    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+
     // Groovy
     testImplementation 'org.codehaus.groovy:groovy-all:3.0.13'
 

@@ -32,7 +32,7 @@ class GetUserLogicSpec extends Specification {
     def "test success getUser"() {
         given:
         def userEmail = ImmutableUserEmail.builder().email("fake@gmail.com").build()
-        def userItem = new UserItemBuilder().email("fake@gmail.com").registrationDate(Instant.now()).token("rawToken").build()
+        def userItem = new UserItemBuilder().email("fake@gmail.com").registrationDate(Instant.now()).token("rawToken").uid("123").build()
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
 
         when:

@@ -26,11 +26,25 @@ docker-compose up
 6. (first time only) create a table at local DynamoDB by opening new tap and running
 ```bash
 aws dynamodb create-table \
---table-name User \
+--table-name user \
 --attribute-definitions AttributeName=email,AttributeType=S \
+                        AttributeName=uid,AttributeType=S \
 --key-schema AttributeName=email,KeyType=HASH \
 --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
---endpoint-url http://localhost:8000 
+--endpoint-url http://localhost:8000 \
+--global-secondary-indexes \ "[
+      {
+          \"IndexName\": \"user_by_uid\",
+          \"KeySchema\": [{\"AttributeName\":\"uid\",\"KeyType\":\"HASH\"}],
+          \"Projection\": {
+              \"ProjectionType\":\"ALL\"
+          },
+          \"ProvisionedThroughput\": {
+              \"ReadCapacityUnits\": 10,
+              \"WriteCapacityUnits\": 5
+          }
+      }
+  ]"
 ```
 
 Now setup is done. Make sure docker containers are running (docker-compose up) and test if the setup was done correctly by calling API.

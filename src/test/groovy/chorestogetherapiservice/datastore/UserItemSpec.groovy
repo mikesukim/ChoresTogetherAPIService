@@ -12,9 +12,10 @@ class UserItemSpec extends Specification {
     def emailMock = "fake@email.com"
     def instantMock = GroovyMock(Instant.class)
     def rawTokenMock = "token"
+    def uidMock = "uid"
 
     @Subject
-    UserItem userItem = new UserItemBuilder().email(emailMock).registrationDate(instantMock).token(rawTokenMock).build()
+    UserItem userItem = new UserItemBuilder().email(emailMock).registrationDate(instantMock).token(rawTokenMock).uid(uidMock).build()
 
     def "test variables"() {
         expect:

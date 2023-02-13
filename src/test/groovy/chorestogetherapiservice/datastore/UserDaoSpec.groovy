@@ -7,6 +7,7 @@ import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
@@ -14,7 +15,6 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.Instant
-import java.util.function.Consumer
 
 class UserDaoSpec extends Specification {
 
@@ -22,10 +22,15 @@ class UserDaoSpec extends Specification {
 
     def rawToken = "token"
 
-    def tableMock = Mock(DynamoDbTable<UserItemSpec>.class)
+    def uid = "123"
+
+    def tableMock = Mock(DynamoDbTable<UserItem>.class)
+
+    def gsiMock = Mock(DynamoDbIndex<UserItem>.class)
 
     def dynamoDbClientMock = Mock(DynamoDbEnhancedClient.class) {
-        it.table("User", _ as TableSchema) >> tableMock
+        it.table("user", _ as TableSchema) >> tableMock
+        tableMock.index("user_by_email") >> gsiMock
     }
 
     @Subject
@@ -34,12 +39,12 @@ class UserDaoSpec extends Specification {
     def "test success get user"() {
         given:
         def randomTime = Instant.ofEpochMilli(1)
-        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).build()
+        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).uid(uid).build()
         def userEmail = ImmutableUserEmail.builder().email(email).build()
 
         when:
         def result = userDao.get(userEmail)
-        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).build()
+        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).uid(uid).build()
 
         then:
         result == expectedResult

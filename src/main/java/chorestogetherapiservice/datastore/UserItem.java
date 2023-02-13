@@ -3,10 +3,12 @@ package chorestogetherapiservice.datastore;
 import chorestogetherapiservice.domain.Token;
 import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.immutablesstyles.DynamoDbImmutableStyle;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import java.time.Instant;
 import org.immutables.value.Value;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey;
 
 /** User Immutable class which is used by DynamoDb-enhanced-client to be mapped with the User table.
  *  More info :
@@ -25,7 +27,8 @@ public interface UserItem {
 
   String getToken();
 
-  // TODO : add unique ID using https://github.com/aventrix/jnanoid, and set as primary key
+  @DynamoDbSecondaryPartitionKey(indexNames = "user_by_uid")
+  String getUid();
 
   /**
    * Expressive factory methods fpr conversion of User type to UserItem.
@@ -36,6 +39,7 @@ public interface UserItem {
         .email(user.getEmail())
         .registrationDate(Instant.now())
         .token(token.getToken())
+        .uid(NanoIdUtils.randomNanoId())
         .build();
   }
 }
