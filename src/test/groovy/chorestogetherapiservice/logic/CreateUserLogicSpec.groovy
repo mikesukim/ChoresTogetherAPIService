@@ -1,14 +1,15 @@
 package chorestogetherapiservice.logic
 
+import chorestogetherapiservice.TestingConstant
 import chorestogetherapiservice.datastore.UserDao
 import chorestogetherapiservice.domain.ImmutableToken
-import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ResponseEntity
 import chorestogetherapiservice.domain.Token
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
 import chorestogetherapiservice.handler.JwtHandler
 import chorestogetherapiservice.handler.ResponseHandler
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -24,12 +25,14 @@ class CreateUserLogicSpec extends Specification {
 
     ResponseEntity responseEntityMock = Mock(ResponseEntity.class)
 
+    @Shared
+    def user = TestingConstant.USER
+
     @Subject
     CreateUserLogic createUserLogic = new CreateUserLogic(userDaoMock, responseHandlerMock, jwtHandlerMock)
 
     def "test success createUser"() {
         given:
-        def user = ImmutableUser.builder().email("fake@gmail.com").build()
         def rawTokenMock = "tokenMock"
         def tokenMock = ImmutableToken.builder().token(rawTokenMock).build()
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
@@ -49,7 +52,6 @@ class CreateUserLogicSpec extends Specification {
 
     def "test when ItemAlreadyExistException raise"() {
         given:
-        def user = ImmutableUser.builder().email("fake@gmail.com").build()
         def rawTokenMock = "tokenMock"
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
@@ -68,7 +70,6 @@ class CreateUserLogicSpec extends Specification {
 
     def "test when dependencyException raise"() {
         given:
-        def user = ImmutableUser.builder().email("fake@gmail.com").build()
         def rawTokenMock = "tokenMock"
         def message = "error message"
         def cause = new Exception()

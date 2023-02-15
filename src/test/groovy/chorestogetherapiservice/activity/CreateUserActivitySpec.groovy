@@ -1,5 +1,6 @@
 package chorestogetherapiservice.activity
 
+import chorestogetherapiservice.TestingConstant
 import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ResponseEntity
 import chorestogetherapiservice.domain.User
@@ -26,7 +27,7 @@ class CreateUserActivitySpec extends Specification {
     def responseEntityMock = Mock(ResponseEntity.class)
 
     @Shared
-    def userMock =  ImmutableUser.builder().email("aaa@aaa.com").build()
+    def user = TestingConstant.USER
 
     //TODO: import Spock.guice to inject Hibernate from Guice and remove validator initialization at setup()
     ExecutableValidator validator
@@ -56,7 +57,7 @@ class CreateUserActivitySpec extends Specification {
         where:
         userInput    | expectedViolationSize
         null         | 1
-        userMock     | 0
+        user         | 0
     }
 
     def 'test createUser success with valid User Input'() {
@@ -64,13 +65,13 @@ class CreateUserActivitySpec extends Specification {
         def expectedResult = Response.status(200).entity(responseEntityMock).build()
 
         when:
-        def result = createUserActivity.createUser(userMock)
+        def result = createUserActivity.createUser(user)
 
         then:
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock) >> expectedResult
+        1 * createUserLogicMock.createUser(user) >> expectedResult
         0 * _
     }
 
@@ -79,13 +80,13 @@ class CreateUserActivitySpec extends Specification {
         def expectedResult = Response.status(500).entity(responseEntityMock).build()
 
         when:
-        def result = createUserActivity.createUser(userMock)
+        def result = createUserActivity.createUser(user)
 
         then:
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock) >> expectedResult
+        1 * createUserLogicMock.createUser(user) >> expectedResult
         0 * _
     }
 
@@ -95,13 +96,13 @@ class CreateUserActivitySpec extends Specification {
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:
-        def result = createUserActivity.createUser(userMock)
+        def result = createUserActivity.createUser(user)
 
         then:
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * createUserLogicMock.createUser(userMock) >> expectedResult
+        1 * createUserLogicMock.createUser(user) >> expectedResult
         0 * _
     }
 

@@ -1,5 +1,6 @@
 package chorestogetherapiservice.handler
 
+import chorestogetherapiservice.TestingConstant
 import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.module.JwtModule
 import com.google.inject.Guice
@@ -9,6 +10,7 @@ import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.MalformedJwtException
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -20,12 +22,14 @@ class JwtHandlerSpec extends Specification {
     JwtParser jwtParserMock = Mock(JwtParser.class)
     JwtBuilder jwtBuilderMock = Mock(JwtBuilder.class)
 
+    @Shared
+    def user = TestingConstant.USER
+
     @Subject
     def jwtHandler = new JwtHandler(jwtParserMock, jwtBuilderMock)
 
     def "test success generating Jwt"() {
         given:
-        def user = ImmutableUser.builder().email("fake@email.com").build()
         def expectedToken = "token"
 
         when:
@@ -45,7 +49,6 @@ class JwtHandlerSpec extends Specification {
 
     def "test parsing Jwt succeed"() {
         given:
-        def user = ImmutableUser.builder().email("fake@email.com").build()
         def token = "fakeToken"
 
         def claimMock = Mock(Jws<Claims>.class)
@@ -62,9 +65,6 @@ class JwtHandlerSpec extends Specification {
     }
 
     def "test when empty Jwt passed"() {
-        given:
-        def user = ImmutableUser.builder().email("fake@email.com").build()
-
         when:
         jwtHandler.parseJwt(Optional<String>.empty(), user)
 
@@ -74,7 +74,6 @@ class JwtHandlerSpec extends Specification {
 
     def "test when parsing failed"() {
         given:
-        def user = ImmutableUser.builder().email("fake@email.com").build()
         def token = "fakeToken"
 
         when:
@@ -89,7 +88,6 @@ class JwtHandlerSpec extends Specification {
 
     def "test when subject is not matched"() {
         given:
-        def user = ImmutableUser.builder().email("fake@email.com").build()
         def unknownUser = ImmutableUser.builder().email("unknown@email.com").build()
         def token = "fakeToken"
 

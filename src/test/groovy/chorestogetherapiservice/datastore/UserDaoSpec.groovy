@@ -1,7 +1,7 @@
 package chorestogetherapiservice.datastore
 
+import chorestogetherapiservice.TestingConstant
 import chorestogetherapiservice.domain.ImmutableToken
-import chorestogetherapiservice.domain.ImmutableUser
 import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
@@ -11,6 +11,7 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -32,6 +33,9 @@ class UserDaoSpec extends Specification {
         it.table("user", _ as TableSchema) >> tableMock
         tableMock.index("user_by_email") >> gsiMock
     }
+
+    @Shared
+    def user = TestingConstant.USER
 
     @Subject
     UserDao userDao = new UserDao(dynamoDbClientMock)
@@ -83,7 +87,6 @@ class UserDaoSpec extends Specification {
 
     def "test success create user"() {
         given:
-        def user = ImmutableUser.builder().email(email).build()
         def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
@@ -96,7 +99,6 @@ class UserDaoSpec extends Specification {
 
     def "test createUser when item already exist"() {
         given:
-        def user = ImmutableUser.builder().email(email).build()
         def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
@@ -111,7 +113,6 @@ class UserDaoSpec extends Specification {
 
     def "test createUser when dynamodb internal failure occurs"() {
         given:
-        def user = ImmutableUser.builder().email(email).build()
         def token = ImmutableToken.builder().token(rawToken).build()
 
         when:
