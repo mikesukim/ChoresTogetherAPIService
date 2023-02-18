@@ -72,7 +72,6 @@ class CreateUserLogicSpec extends Specification {
         given:
         def rawTokenMock = "tokenMock"
         def message = "error message"
-        def cause = new Exception()
         def expectedResult = Response.status(400).entity(responseEntityMock).build()
 
         when:
@@ -83,7 +82,7 @@ class CreateUserLogicSpec extends Specification {
         result.entity == expectedResult.entity
 
         1 * jwtHandlerMock.generateJwt(user) >> rawTokenMock
-        1 * userDaoMock.create(user,{it.getToken() == rawTokenMock} as Token) >> {throw new DependencyFailureInternalException(message,cause)}
+        1 * userDaoMock.create(user,{it.getToken() == rawTokenMock} as Token) >> {throw new DependencyFailureInternalException(message)}
         1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
         0 * _
     }

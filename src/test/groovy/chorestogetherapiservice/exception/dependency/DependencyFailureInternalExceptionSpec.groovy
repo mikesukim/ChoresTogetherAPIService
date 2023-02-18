@@ -7,18 +7,15 @@ class DependencyFailureInternalExceptionSpec extends Specification {
 
     def message = "error message"
 
-    def cause = new Exception()
-
     @Subject
     def dependencyFailureInternalException
 
     def "test dependencyFailureInternalException initialization"() {
         given:
-        dependencyFailureInternalException = new DependencyFailureInternalException(message, cause)
+        dependencyFailureInternalException = new DependencyFailureInternalException(message)
 
         expect:
         dependencyFailureInternalException.message == message
-        dependencyFailureInternalException.cause == cause
     }
 
 }

@@ -1,5 +1,6 @@
 package chorestogetherapiservice.datastore;
 
+import chorestogetherapiservice.constant.Constants;
 import chorestogetherapiservice.domain.Token;
 import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.immutablesstyles.DynamoDbImmutableStyle;
@@ -20,14 +21,14 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecon
 @DynamoDbImmutable(builder = UserItemBuilder.class)
 public interface UserItem {
 
-  @DynamoDbPartitionKey
+  @DynamoDbSecondaryPartitionKey(indexNames = Constants.USER_GSI_NAME)
   String getEmail();
 
   Instant getRegistrationDate();
 
   String getToken();
 
-  @DynamoDbSecondaryPartitionKey(indexNames = "user_by_uid")
+  @DynamoDbPartitionKey
   String getUid();
 
   /**

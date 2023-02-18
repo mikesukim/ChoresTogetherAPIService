@@ -76,7 +76,7 @@ class GetUserLogicSpec extends Specification {
         result.status == expectedResult.status
         result.entity == expectedResult.entity
 
-        1 * userDaoMock.get(userEmail) >> {throw new DependencyFailureInternalException("", new Exception())}
+        1 * userDaoMock.get(userEmail) >> {throw new DependencyFailureInternalException("")}
         1 * responseHandlerMock.generateFailResponseWith(_) >> expectedResult
         0 * _
     }

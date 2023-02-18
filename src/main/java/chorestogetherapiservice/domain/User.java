@@ -16,6 +16,7 @@ import org.immutables.value.Value;
 @JsonSerialize(as = ImmutableUser.class)
 @JsonDeserialize(as = ImmutableUser.class)
 public interface User {
+  //TODO: add uid
   String getEmail();
 
   /**

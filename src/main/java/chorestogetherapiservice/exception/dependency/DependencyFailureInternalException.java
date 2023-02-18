@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
  * (e.x. dynamodb-client)
  */
 public class DependencyFailureInternalException extends WebApplicationException {
-  public DependencyFailureInternalException(String message, Throwable cause) {
-    super(message, cause, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+  public DependencyFailureInternalException(String message) {
+    super(message, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
   }
 }

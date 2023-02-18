@@ -29,13 +29,13 @@ aws dynamodb create-table \
 --table-name user \
 --attribute-definitions AttributeName=email,AttributeType=S \
                         AttributeName=uid,AttributeType=S \
---key-schema AttributeName=email,KeyType=HASH \
+--key-schema AttributeName=uid,KeyType=HASH \
 --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
 --endpoint-url http://localhost:8000 \
 --global-secondary-indexes \ "[
       {
-          \"IndexName\": \"user_by_uid\",
-          \"KeySchema\": [{\"AttributeName\":\"uid\",\"KeyType\":\"HASH\"}],
+          \"IndexName\": \"user_by_email\",
+          \"KeySchema\": [{\"AttributeName\":\"email\",\"KeyType\":\"HASH\"}],
           \"Projection\": {
               \"ProjectionType\":\"ALL\"
           },

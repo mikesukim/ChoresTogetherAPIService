@@ -6,16 +6,17 @@ import chorestogetherapiservice.domain.ImmutableUserEmail
 import chorestogetherapiservice.exception.datastore.ItemAlreadyExistException
 import chorestogetherapiservice.exception.datastore.NoItemFoundException
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException
+import software.amazon.awssdk.core.pagination.sync.SdkIterable
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
+import software.amazon.awssdk.enhanced.dynamodb.model.Page
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-
-import java.time.Instant
 
 class UserDaoSpec extends Specification {
 
@@ -40,26 +41,54 @@ class UserDaoSpec extends Specification {
     @Subject
     UserDao userDao = new UserDao(dynamoDbClientMock)
 
-    def "test success get user"() {
+    def "test success getUser"() {
         given:
-        def randomTime = Instant.ofEpochMilli(1)
-        def userItem = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).uid(uid).build()
         def userEmail = ImmutableUserEmail.builder().email(email).build()
+        ArrayList<UserItem> userItems = new ArrayList<>()
+        ArrayList<Page<UserItem>> pages = new ArrayList<>()
+        userItems.add(TestingConstant.USER_ITEM)
+        Page<UserItem> page = new Page<>(userItems, null)
+        pages.add(page)
 
         when:
         def result = userDao.get(userEmail)
-        def expectedResult = new UserItemBuilder().email(email).registrationDate(randomTime).token(rawToken).uid(uid).build()
+        def expectedResult = TestingConstant.USER_ITEM
 
         then:
         result == expectedResult
 
-        1 * tableMock.getItem(_) >> userItem
+        1 * tableMock.index("user_by_email").query(_ as QueryEnhancedRequest)
+                >> Mock(SdkIterable<Page<UserItem>>.class){it.stream() >> pages.stream()}
         0 * _
     }
 
-    def "test when no item was found"() {
+    def "test getUser failure when multiple users with same email"() {
+        given:
+        def userEmail = ImmutableUserEmail.builder().email(email).build()
+        ArrayList<UserItem> userItems = new ArrayList<>()
+        ArrayList<Page<UserItem>> pages = new ArrayList<>()
+        userItems.add(TestingConstant.USER_ITEM)
+        userItems.add(TestingConstant.USER_ITEM_2)
+        Page<UserItem> page = new Page<>(userItems, null)
+        pages.add(page)
+
+        when:
+        userDao.get(userEmail)
+
+        then:
+        thrown(ItemAlreadyExistException)
+
+        1 * tableMock.index("user_by_email").query(_ as QueryEnhancedRequest)
+                >> Mock(SdkIterable<Page<UserItem>>.class){it.stream() >> pages.stream()}
+        0 * _
+    }
+
+    def "test getUser failure when no item was found"() {
         given:
         def userEmailMock = ImmutableUserEmail.builder().email(email).build()
+        ArrayList<UserItem> userItems = new ArrayList<>()
+        ArrayList<Page<UserItem>> pages = new ArrayList<>()
+        userItems.add(TestingConstant.USER_ITEM)
 
         when:
         userDao.get(userEmailMock)
@@ -67,7 +96,8 @@ class UserDaoSpec extends Specification {
         then:
         thrown(NoItemFoundException)
 
-        1 * tableMock.getItem(_) >> null
+        1 * tableMock.index("user_by_email").query(_ as QueryEnhancedRequest)
+                >> Mock(SdkIterable<Page<UserItem>>.class){it.stream() >> pages.stream()}
         0 * _
     }
 
@@ -81,7 +111,8 @@ class UserDaoSpec extends Specification {
         then:
         thrown(DependencyFailureInternalException)
 
-        1 * tableMock.getItem(_) >> new Exception()
+        1 * tableMock.index("user_by_email").query(_ as QueryEnhancedRequest)
+                >> {new Exception()}
         0 * _
     }
 
