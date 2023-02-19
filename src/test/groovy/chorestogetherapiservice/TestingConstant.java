@@ -19,4 +19,6 @@ public final class TestingConstant {
       .email(EMAIL).uid(UID).token(TOKEN).registrationDate(INSTANT).build();
   static final UserItem USER_ITEM_2 = new UserItemBuilder()
       .email(EMAIL).uid(UID).token(TOKEN).registrationDate(INSTANT).build();
+
+  static final String AUTHORIZATION_HEADER = "Bearer " + TOKEN;
 }

@@ -1,5 +1,6 @@
 package chorestogetherapiservice.activity;
 
+import chorestogetherapiservice.annotation.Authenticated;
 import chorestogetherapiservice.domain.ImmutableUserEmail;
 import chorestogetherapiservice.exception.datastore.NoItemFoundException;
 import chorestogetherapiservice.exception.dependency.DependencyFailureInternalException;
@@ -56,6 +57,7 @@ public class GetUserActivity {
    * */
   @GET
   @Path("/{userEmailInput}")
+  @Authenticated
   @Produces(MediaType.APPLICATION_JSON)
   public Response getUser(@NotNull @NotEmpty @PathParam("userEmailInput") String userEmailInput)
       throws PatternSyntaxException, DependencyFailureInternalException, NoItemFoundException {
