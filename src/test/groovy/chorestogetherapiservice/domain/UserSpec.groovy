@@ -6,9 +6,10 @@ import spock.lang.Subject
 class UserSpec extends Specification {
 
     def email = "fake@email.com"
+    def uid = "123"
 
     @Subject
-    User user = ImmutableUser.builder().email(email).build()
+    User user = ImmutableUser.builder().email(email).uid(uid).build()
 
     def "test getEmail"() {
         when:

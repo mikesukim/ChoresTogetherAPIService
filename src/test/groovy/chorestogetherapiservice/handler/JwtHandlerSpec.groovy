@@ -1,11 +1,9 @@
 package chorestogetherapiservice.handler
 
 import chorestogetherapiservice.TestingConstant
-import chorestogetherapiservice.domain.ImmutableUser
-import chorestogetherapiservice.module.JwtModule
-import com.google.inject.Guice
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
+import io.jsonwebtoken.Jwt
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.JwtParser
@@ -16,8 +14,10 @@ import spock.lang.Subject
 
 class JwtHandlerSpec extends Specification {
 
-    private final String JWT_HEADER_ISSUER = "ChoresAPIService"
-    private final String JWT_HEADER_AUDIENCE = "ChoresAPIService"
+    @Shared
+    private final String JWT_HEADER_ISSUER = "ChoresTogetherAPIService"
+    @Shared
+    private final String JWT_HEADER_AUDIENCE = "ChoresTogether"
 
     JwtParser jwtParserMock = Mock(JwtParser.class)
     JwtBuilder jwtBuilderMock = Mock(JwtBuilder.class)
@@ -39,7 +39,7 @@ class JwtHandlerSpec extends Specification {
         result == expectedToken
 
         1 * jwtBuilderMock.setIssuer(JWT_HEADER_ISSUER) >> jwtBuilderMock
-        1 * jwtBuilderMock.setSubject(user.toString()) >> jwtBuilderMock
+        1 * jwtBuilderMock.setSubject(user.getUid().toString()) >> jwtBuilderMock
         1 * jwtBuilderMock.setAudience(JWT_HEADER_AUDIENCE) >> jwtBuilderMock
         1 * jwtBuilderMock.setIssuedAt(_) >> jwtBuilderMock
         1 * jwtBuilderMock.compact() >> expectedToken
@@ -51,25 +51,19 @@ class JwtHandlerSpec extends Specification {
         given:
         def token = "fakeToken"
 
-        def claimMock = Mock(Jws<Claims>.class)
+        def claimMock = Mock(Jws.class)
         def claimBodyMock = Mock(Claims.class)
 
         when:
-        jwtHandler.parseJwt(Optional<String>.of(token), user)
+        jwtHandler.parseJwt(token)
 
         then:
         1 * jwtParserMock.parseClaimsJws(token) >> claimMock
-        1 * claimMock.getBody() >> claimBodyMock
-        1 * claimBodyMock.getSubject() >> user.toString()
+        3 * claimMock.getBody() >> claimBodyMock
+        1 * claimBodyMock.getAudience() >> JWT_HEADER_AUDIENCE
+        1 * claimBodyMock.getIssuer() >> JWT_HEADER_ISSUER
+        1 * claimBodyMock.getSubject() >> TestingConstant.UID
         0 * _
-    }
-
-    def "test when empty Jwt passed"() {
-        when:
-        jwtHandler.parseJwt(Optional<String>.empty(), user)
-
-        then:
-        thrown(JwtException)
     }
 
     def "test when parsing failed"() {
@@ -77,7 +71,7 @@ class JwtHandlerSpec extends Specification {
         def token = "fakeToken"
 
         when:
-        jwtHandler.parseJwt(Optional<String>.of(token), user)
+        jwtHandler.parseJwt(token)
 
         then:
         thrown(JwtException)
@@ -86,23 +80,63 @@ class JwtHandlerSpec extends Specification {
         0 * _
     }
 
-    def "test when subject is not matched"() {
+    def "test when audience is not matched"() {
         given:
-        def unknownUser = ImmutableUser.builder().email("unknown@email.com").build()
         def token = "fakeToken"
 
         def claimMock = Mock(Jws<Claims>.class)
         def claimBodyMock = Mock(Claims.class)
 
         when:
-        jwtHandler.parseJwt(Optional<String>.of(token), user)
+        jwtHandler.parseJwt(token)
 
         then:
         thrown(JwtException)
 
         1 * jwtParserMock.parseClaimsJws(token) >> claimMock
         1 * claimMock.getBody() >> claimBodyMock
-        1 * claimBodyMock.getSubject() >> unknownUser.toString()
+        1 * claimBodyMock.getAudience() >> "wrong Audience"
+        0 * _
+    }
+
+    def "test when issuer is not matched"() {
+        given:
+        def token = "fakeToken"
+
+        def claimMock = Mock(Jws<Claims>.class)
+        def claimBodyMock = Mock(Claims.class)
+
+        when:
+        jwtHandler.parseJwt(token)
+
+        then:
+        thrown(JwtException)
+
+        1 * jwtParserMock.parseClaimsJws(token) >> claimMock
+        2 * claimMock.getBody() >> claimBodyMock
+        1 * claimBodyMock.getAudience() >> JWT_HEADER_AUDIENCE
+        1 * claimBodyMock.getIssuer() >> "wrong issuer"
+        0 * _
+    }
+
+    def "test when Jwt subject is empty"() {
+        given:
+        def token = "fakeToken"
+
+        def claimMock = Mock(Jws.class)
+        def claimBodyMock = Mock(Claims.class)
+
+        when:
+        jwtHandler.parseJwt(token)
+
+        then:
+        thrown(JwtException)
+
+        1 * jwtParserMock.parseClaimsJws(token) >> claimMock
+        3 * claimMock.getBody() >> claimBodyMock
+        1 * claimBodyMock.getAudience() >> JWT_HEADER_AUDIENCE
+        1 * claimBodyMock.getIssuer() >> JWT_HEADER_ISSUER
+        1 * claimBodyMock.getSubject() >> null
         0 * _
     }
 

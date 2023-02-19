@@ -4,7 +4,6 @@ import chorestogetherapiservice.constant.Constants;
 import chorestogetherapiservice.domain.Token;
 import chorestogetherapiservice.domain.User;
 import chorestogetherapiservice.immutablesstyles.DynamoDbImmutableStyle;
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import java.time.Instant;
 import org.immutables.value.Value;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
@@ -40,7 +39,7 @@ public interface UserItem {
         .email(user.getEmail())
         .registrationDate(Instant.now())
         .token(token.getToken())
-        .uid(NanoIdUtils.randomNanoId())
+        .uid(user.getUid())
         .build();
   }
 }

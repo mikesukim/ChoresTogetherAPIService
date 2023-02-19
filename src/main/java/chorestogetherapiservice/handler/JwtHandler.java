@@ -1,6 +1,8 @@
 package chorestogetherapiservice.handler;
 
 import chorestogetherapiservice.domain.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -19,8 +21,8 @@ import javax.inject.Singleton;
 @SuppressWarnings({"checkstyle:AbbreviationAsWordInName", "checkstyle:MemberName"})
 public class JwtHandler {
 
-  private final String JWT_HEADER_ISSUER = "ChoresAPIService";
-  private final String JWT_HEADER_AUDIENCE = "ChoresAPIService";
+  private final String JWT_HEADER_ISSUER = "ChoresTogetherAPIService";
+  private final String JWT_HEADER_AUDIENCE = "ChoresTogether";
 
   JwtParser jwtParser;
   JwtBuilder jwtBuilder;
@@ -38,30 +40,34 @@ public class JwtHandler {
   public String generateJwt(User user) {
     return jwtBuilder
         .setIssuer(JWT_HEADER_ISSUER)
-        .setSubject(user.toString())
+        .setSubject(user.getUid())
         .setAudience(JWT_HEADER_AUDIENCE)
         .setIssuedAt(Date.from(Instant.now()))
         .compact();
   }
 
   /**
-   * parse JWT.
-   * on top of library's parsing through parseClaimsJws(),
-   * Jwt subject is checked. If subject is not what is not expected,
-   * parsing fails by raising  JwtException.
-   * */
-  public void parseJwt(Optional<String> jws, User user) throws JwtException {
-    if (jws.isEmpty()) {
-      throw new JwtException("empty jwt should not be passed");
-    }
+   * parse JWT with jwtParser's secret key (see JwtModule).
+   * If audience or issuer is not correct, then JwtException occurs.
+   *
+   * @return Token's subject, expected to be uid of User
+   */
+  public String parseJwt(String jwt) throws JwtException {
+    Jws<Claims> parsedJwt;
     try {
-      String subject = jwtParser.parseClaimsJws(jws.get()).getBody().getSubject();
-      if (!user.toString().equals(subject)) {
-        throw new JwtException("JWT subject is not matched");
+      parsedJwt = jwtParser.parseClaimsJws(jwt);
+      if (!JWT_HEADER_AUDIENCE.equals(parsedJwt.getBody().getAudience())
+          || !JWT_HEADER_ISSUER.equals(parsedJwt.getBody().getIssuer())) {
+        throw new JwtException("audience or issuer is not correct");
       }
     } catch (JwtException e) {
       throw new JwtException(e.getMessage(), e);
     }
+    Optional<String> rawUid = Optional.ofNullable(parsedJwt.getBody().getSubject());
+    if (rawUid.isEmpty()) {
+      throw new JwtException("subject is missing");
+    }
+    return rawUid.get();
   }
 
 }

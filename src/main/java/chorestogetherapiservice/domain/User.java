@@ -16,7 +16,8 @@ import org.immutables.value.Value;
 @JsonSerialize(as = ImmutableUser.class)
 @JsonDeserialize(as = ImmutableUser.class)
 public interface User {
-  //TODO: add uid
+  String getUid();
+
   String getEmail();
 
   /**
@@ -38,6 +39,7 @@ public interface User {
    * */
   static User of(UserItem userItem) {
     return ImmutableUser.builder()
+        .uid(userItem.getUid())
         .email(userItem.getEmail())
         .build();
   }

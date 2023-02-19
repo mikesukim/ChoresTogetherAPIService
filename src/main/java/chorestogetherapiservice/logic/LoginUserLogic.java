@@ -16,6 +16,7 @@ import chorestogetherapiservice.factory.SocialIdTokenVerifierFactory;
 import chorestogetherapiservice.handler.JwtHandler;
 import chorestogetherapiservice.handler.ResponseHandler;
 import chorestogetherapiservice.verifier.SocialIdTokenVerifier;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -79,7 +80,11 @@ public class LoginUserLogic {
     }
 
     // If not exist, register user
-    User user = ImmutableUser.builder().email(rawUserEmail.get()).build();
+    User user = ImmutableUser.builder()
+        .email(rawUserEmail.get())
+        .uid(NanoIdUtils.randomNanoId())
+        .build();
+
     String rawToken = jwtHandler.generateJwt(user);
     Token token = ImmutableToken.builder().token(rawToken).build();
     userDao.create(user, token);

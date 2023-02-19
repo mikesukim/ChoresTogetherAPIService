@@ -13,7 +13,7 @@ public final class TestingConstant {
   static final String UID = "123";
   static final String TOKEN = "token";
   static final Instant INSTANT = Instant.ofEpochSecond(1);
-  static final User USER = ImmutableUser.builder().email(EMAIL).build();
+  static final User USER = ImmutableUser.builder().email(EMAIL).uid(UID).build();
 
   static final UserItem USER_ITEM = new UserItemBuilder()
       .email(EMAIL).uid(UID).token(TOKEN).registrationDate(INSTANT).build();
