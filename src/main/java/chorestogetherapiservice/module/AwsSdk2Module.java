@@ -1,5 +1,6 @@
 package chorestogetherapiservice.module;
 
+import chorestogetherapiservice.util.EnvValReader;
 import com.google.inject.Exposed;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
@@ -17,7 +18,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 public class AwsSdk2Module extends PrivateModule {
 
-  private static final String DYNAMODB_ENDPOINT = "local.us-west-2.dynamodb.endpoint.table.user";
+  private static final String DYNAMODB_ENDPOINT = "dynamodb.endpoint";
 
   @Override
   protected void configure() {
@@ -26,11 +27,20 @@ public class AwsSdk2Module extends PrivateModule {
 
   @Provides
   @Singleton
-  DynamoDbClient dynamoDbClient(Properties properties) {
+  String dynamodbEndpoint(Properties properties) {
+    // TODO: test coverage. PowerMockito is required.
+    String stage = EnvValReader.getStage();
+    String region = EnvValReader.getRegion();
+    return properties.getProperty(stage + "." + region + "." + DYNAMODB_ENDPOINT);
+  }
+
+  @Provides
+  @Singleton
+  DynamoDbClient dynamoDbClient(String dynamoDbEndPoint) {
     return DynamoDbClient.builder()
         //TODO: get stage and region from ENVIRONMENT variables
         //TODO: add retries
-        .endpointOverride(URI.create(properties.getProperty(DYNAMODB_ENDPOINT)))
+        .endpointOverride(URI.create(dynamoDbEndPoint))
         // The region is meaningless for local DynamoDb but required for client builder validation
         .region(DefaultAwsRegionProviderChain.builder().build().getRegion())
         .build();

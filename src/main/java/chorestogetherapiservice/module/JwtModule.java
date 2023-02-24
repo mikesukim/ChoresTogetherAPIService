@@ -1,5 +1,6 @@
 package chorestogetherapiservice.module;
 
+import chorestogetherapiservice.util.EnvValReader;
 import com.google.inject.Exposed;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
@@ -7,11 +8,8 @@ import com.google.inject.Singleton;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
-import javax.crypto.SecretKey;
 
 /**
  * Module for providing JwtBuilder and JwtParser types.
@@ -21,6 +19,9 @@ import javax.crypto.SecretKey;
  *  */
 public class JwtModule extends PrivateModule {
 
+  private static final String LOCAL_JWT_SECRET_KEY =
+      "q5416deaICrNXfeCxdRErU/qGxyF7D0vUqfvxHaipAt98nSVuS5/EJKLxcKerILy";
+
   @Override
   protected void configure() {
 
@@ -29,9 +30,13 @@ public class JwtModule extends PrivateModule {
   @Provides
   @Singleton
   String key() {
-    //TODO: pull a constant secret key from safe place.(e.x properties or AWS secret Manager)
-    SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    return Encoders.BASE64.encode(key.getEncoded());
+    String stage = EnvValReader.getStage();
+    // TODO: test coverage. PowerMockito is required.
+    if (stage.equals("local")) {
+      return LOCAL_JWT_SECRET_KEY;
+    }
+    //TODO: pull a constant secret key from safe place.(AWS secret Manager)
+    throw new RuntimeException("AWS Secret Manager is not onboarded yet");
   }
 
   @Provides

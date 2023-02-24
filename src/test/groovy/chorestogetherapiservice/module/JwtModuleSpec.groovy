@@ -1,5 +1,6 @@
 package chorestogetherapiservice.module
 
+import chorestogetherapiservice.util.EnvValReader
 import com.google.inject.Guice
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.JwtParser
@@ -17,22 +18,6 @@ class JwtModuleSpec extends Specification {
     def jwtModule = new JwtModule()
 
     def injector =  Guice.createInjector(jwtModule)
-
-    def "test jwtBuilder injection"() {
-        when:
-        def result = injector.getInstance(JwtBuilder.class)
-
-        then:
-        result instanceof JwtBuilder
-    }
-
-    def "test jwtParser injection"() {
-        when:
-        def result = injector.getInstance(JwtParser.class)
-
-        then:
-        result instanceof JwtParser
-    }
 
     def "test raising exception when key size is not long enough"() {
         given:
@@ -55,5 +40,17 @@ class JwtModuleSpec extends Specification {
 
         then:
         result instanceof JwtBuilder
+    }
+
+    def "test success generating jwtParser when key size is long enough"() {
+        given:
+        def mockSecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+        def mockStringSecretKey = Encoders.BASE64.encode(mockSecretKey.getEncoded())
+
+        when:
+        def result = jwtModule.jwtParser(mockStringSecretKey)
+
+        then:
+        result instanceof JwtParser
     }
 }

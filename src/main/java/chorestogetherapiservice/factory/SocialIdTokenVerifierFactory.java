@@ -30,7 +30,6 @@ public class SocialIdTokenVerifierFactory {
       case KAKAO:
         return kakaoIdTokenVerifier;
       default:
-        // TODO: test coverage
         throw new RuntimeException("not supported social login is used.");
     }
   }
