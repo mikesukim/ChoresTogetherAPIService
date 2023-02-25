@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.inject.Singleton;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
@@ -56,8 +57,10 @@ public class AwsSdk2Module extends PrivateModule {
         }
       });
     } else {
-      // TODO: get credentials from IAM role
-      awsCredentialsProvider = null;
+      // 5th order of DefaultCredentialsProvider chain, the ContainerCredentialsProvider
+      // should pull credential from its ECS task IAM role.
+      // https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html#credentials-chain
+      awsCredentialsProvider = DefaultCredentialsProvider.create();
     }
     return awsCredentialsProvider;
   }
