@@ -1,5 +1,7 @@
 package chorestogetherapiservice.module
 
+import software.amazon.awssdk.auth.credentials.AwsCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import spock.lang.Specification
@@ -13,7 +15,19 @@ class AwsSdk2ModuleSpec extends Specification{
     def "test success creation of DynamoDbClient"() {
         when:
         def endpointMock = "http://dynamodb-local:8000"
-        def result = awsSdk2Module.dynamoDbClient(endpointMock)
+        def awsCredentialsProviderMock = Mock(AwsCredentialsProvider.class) {
+            it.resolveCredentials() >> new AwsCredentials() {
+                @Override
+                String accessKeyId() {
+                    return "accessKeyOnlyForDynamoDB"
+                }
+                @Override
+                String secretAccessKey() {
+                    return "secretAccessKeyOnlyForDynamoDB"
+                }
+            }
+        }
+        def result = awsSdk2Module.dynamoDbClient(endpointMock, awsCredentialsProviderMock)
 
         then:
         result instanceof DynamoDbClient

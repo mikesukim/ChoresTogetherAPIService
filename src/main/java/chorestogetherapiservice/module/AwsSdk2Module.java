@@ -7,6 +7,9 @@ import com.google.inject.Provides;
 import java.net.URI;
 import java.util.Properties;
 import javax.inject.Singleton;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -36,9 +39,35 @@ public class AwsSdk2Module extends PrivateModule {
 
   @Provides
   @Singleton
-  DynamoDbClient dynamoDbClient(String dynamoDbEndPoint) {
+  AwsCredentialsProvider awsCredentialsProvider() {
+    // TODO: test coverage. PowerMockito is required.
+    String stage = EnvValReader.getStage();
+    AwsCredentialsProvider awsCredentialsProvider;
+    if (stage.equals("local")) {
+      awsCredentialsProvider = StaticCredentialsProvider.create(new AwsCredentials() {
+        @Override
+        public String accessKeyId() {
+          return "accessKeyOnlyForDynamoDB";
+        }
+
+        @Override
+        public String secretAccessKey() {
+          return "secretAccessKeyOnlyForDynamoDB";
+        }
+      });
+    } else {
+      // TODO: get credentials from IAM role
+      awsCredentialsProvider = null;
+    }
+    return awsCredentialsProvider;
+  }
+
+  @Provides
+  @Singleton
+  DynamoDbClient dynamoDbClient(String dynamoDbEndPoint,
+                                AwsCredentialsProvider awsCredentialsProvider) {
     return DynamoDbClient.builder()
-        //TODO: get stage and region from ENVIRONMENT variables
+        .credentialsProvider(awsCredentialsProvider)
         //TODO: add retries
         .endpointOverride(URI.create(dynamoDbEndPoint))
         // The region is meaningless for local DynamoDb but required for client builder validation

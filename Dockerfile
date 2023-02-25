@@ -6,11 +6,6 @@ COPY . /src/ChoresTogetherAPIService
 # set default virtual directory
 WORKDIR /src/ChoresTogetherAPIService
 
-# TODO: get region and stage as ARGs
-# Required environment variables for AWS SDK
-ENV AWS_ACCESS_KEY_ID=fakeMyKeyId
-ENV AWS_SECRET_ACCESS_KEY=fakeSecretAccessKey
-
 # In order for our service to run differently depends on Region and Stage (e.x  dynamoDB endpoint),
 # these two environment variables must be specified ECS task definition as well, which will mask below default values.
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/taskdef-envfiles.html
