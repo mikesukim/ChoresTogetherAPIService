@@ -1,6 +1,7 @@
 package chorestogetherapiservice.module;
 
 import chorestogetherapiservice.util.EnvValReader;
+import com.amazonaws.secretsmanager.caching.SecretCache;
 import com.google.inject.Exposed;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
@@ -21,6 +22,7 @@ public class JwtModule extends PrivateModule {
 
   private static final String LOCAL_JWT_SECRET_KEY =
       "q5416deaICrNXfeCxdRErU/qGxyF7D0vUqfvxHaipAt98nSVuS5/EJKLxcKerILy";
+  private static final String JWT_SECRET_KEY_SECRET_ID = "ChoresTogetherApiServiceJwtSecretKey";
 
   @Override
   protected void configure() {
@@ -29,14 +31,13 @@ public class JwtModule extends PrivateModule {
 
   @Provides
   @Singleton
-  String key() {
+  String key(SecretCache secretCache) {
     String stage = EnvValReader.getStage();
     // TODO: test coverage. PowerMockito is required.
     if (stage.equals("local")) {
       return LOCAL_JWT_SECRET_KEY;
     }
-    //TODO: pull a constant secret key from safe place.(AWS secret Manager)
-    throw new RuntimeException("AWS Secret Manager is not onboarded yet");
+    return secretCache.getSecretString(JWT_SECRET_KEY_SECRET_ID);
   }
 
   @Provides

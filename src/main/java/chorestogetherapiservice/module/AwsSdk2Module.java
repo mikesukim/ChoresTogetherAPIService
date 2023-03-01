@@ -1,6 +1,7 @@
 package chorestogetherapiservice.module;
 
 import chorestogetherapiservice.util.EnvValReader;
+import com.amazonaws.secretsmanager.caching.SecretCache;
 import com.google.inject.Exposed;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
@@ -85,5 +86,12 @@ public class AwsSdk2Module extends PrivateModule {
     return DynamoDbEnhancedClient.builder()
         .dynamoDbClient(dynamoDbClient)
         .build();
+  }
+
+  @Provides
+  @Singleton
+  @Exposed
+  SecretCache secretCache() {
+    return new SecretCache();
   }
 }

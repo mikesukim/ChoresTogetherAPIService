@@ -11,8 +11,6 @@ import io.jsonwebtoken.security.WeakKeyException
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.security.Key
-
 class JwtModuleSpec extends Specification {
     @Subject
     def jwtModule = new JwtModule()

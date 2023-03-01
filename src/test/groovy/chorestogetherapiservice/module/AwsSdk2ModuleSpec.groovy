@@ -1,5 +1,6 @@
 package chorestogetherapiservice.module
 
+import com.amazonaws.secretsmanager.caching.SecretCache
 import software.amazon.awssdk.auth.credentials.AwsCredentials
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
@@ -40,5 +41,13 @@ class AwsSdk2ModuleSpec extends Specification{
 
         then:
         result instanceof DynamoDbEnhancedClient
+    }
+
+    def "test success creation of SecretCache"() {
+        when:
+        def result = awsSdk2Module.secretCache()
+
+        then:
+        result instanceof SecretCache
     }
 }
